@@ -1,3 +1,4 @@
+```
 ADT List{
 	数据对象：D = { ai | ai  ϵ ElemSet, i = 1, 2, …, n, n ≥ 0}
 	数据关系：Rl = { <ai - 1, ai> | ai - 1, ai  ϵ D, i = 1, 2, …, n, n ≥ 0 }
@@ -38,3 +39,4 @@ ADT List{
 			Init：线性表L已存在;
 			Re：依次对L的每个元素调用函数vist();一旦vist()失败，则操作失败;
 } ADT List;
+```
