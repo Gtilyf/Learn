@@ -1,10 +1,10 @@
 # Variable
 
-> 总结自C++ Primer，包括C++引用、指针、左值、右值、常量、函数等;
+> 总结自C++ Primer，包括C++引用、指针、左值、右值、常量等;
 
 ### declaration & deginition
 
- declaration不申请内存空间，变量可以重复声明`(extern)`; definition申请内存空间，变量只能定义一次;
+declaration不申请内存空间，变量可以重复声明`(extern)`; definition申请内存空间，变量只能定义一次;
 
 ### compound type
 
@@ -32,18 +32,21 @@ const int a = 1080;
 ```
 常量一旦定义就不可以再修改，所以常量必须进行初始化;
 
-**reference to pointer ：** 对指针的引用
+**reference to pointer**
 ```c++
 int a = 10;
 int* ptr = &a;
 int*& rePtr = ptr;
 ```
+对指针的引用
 
-**reference to const & pointer to const ：** 对常量的引用（常量引用）& 指向常量的指针
+**reference to const & pointer to const**
 ```c++
 const int& re = a;
 const int* ptr = &a;
 ```
+对常量的引用（常量引用）& 指向常量的指针
+
 不可以通过指向常量的指针或引用去改变其绑定对象的值，如果该对象不是常量，则可以通过其他途径改变其值（该指针或引用自以为自己指向的是常量，对const的引用可能引用一个并非cosnt的对象）;
 
 当然，对于常量对象只能使用指向常量的指针或引用;
@@ -81,7 +84,7 @@ int&& rRe1 = move(a); // 左值显式的转换成右值引用
 	3. 内置解引用运算符、下标运算符、迭代器解引用运算符、string和vector的下表运算得到的结果都是**左值**;
 	4. 内置类型和迭代器的递增递减运算符作用于左值对象，其前置版本得到的结果也是左值;
 
-**decltype ：** 类型指示符
+**decltype**
 ```c++
 decltype( f() ) sum = x; // sum的类型就是函数f的返回类型
 ```
