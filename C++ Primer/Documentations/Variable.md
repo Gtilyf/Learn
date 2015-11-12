@@ -8,7 +8,7 @@ declaration不申请内存空间，变量可以重复声明`(extern)`; definitio
 
 ### compound type
 
-**reference**
+**reference :**
 ```c++
 int a = 10;
 int& re = a;
@@ -19,20 +19,20 @@ int& re = a;
  1. 对常量的引用（常量引用）允许使用任意表达式作为初始值，只要该表达式的结果能转换成引用类型即可，比如字面值常量;
  2. 基类引用绑定派生类对象
 
-**pointer** 
+**pointer :** 
 ```c++
 int a = 10;
 int* ptr = &a;
 ```
 point to, 指针本身即是一个对象;
 
-**const**
+**const :**
 ```c++
 const int a = 1080;
 ```
 常量一旦定义就不可以再修改，所以常量必须进行初始化;
 
-**reference to pointer**
+**reference to pointer :**
 ```c++
 int a = 10;
 int* ptr = &a;
@@ -40,7 +40,7 @@ int*& rePtr = ptr;
 ```
 对指针的引用
 
-**reference to const & pointer to const**
+**reference to const & pointer to const :**
 ```c++
 const int& re = a;
 const int* ptr = &a;
@@ -51,14 +51,14 @@ const int* ptr = &a;
 
 当然，对于常量对象只能使用指向常量的指针或引用;
 
-**const pointer**
+**const pointer :**
 ```c++
 int* const ptr = &a;
 const int* const cPtr = &a; // 指向常量的常量指针，指针以及其指向的对象都不可以进行修改;
 ```
 常量指针，指针是常量，即该指针不可改变，但是可以通过该指针修改其指向的对象;
 
-**top-level const & low-level const**
+**top-level const & low-level const :**
 ```c++
 int* const ptr = &a; // top level const
 const int* ptr = &a; // low level const
@@ -67,7 +67,7 @@ const int* ptr = &a; // low level const
 
 auto类型推断也会忽略top-level const，但不会忽略low-level const, 如果想要保留top-level const则需明确指定( `const auto a = r;` );
 
-**lvalue & rvalue**
+**lvalue & rvalue :**
 ```c++
 int&& rRe = 2; // 右值引用
 int&& rRe1 = move(a); // 左值显式的转换成右值引用
@@ -84,7 +84,7 @@ int&& rRe1 = move(a); // 左值显式的转换成右值引用
 	3. 内置解引用运算符、下标运算符、迭代器解引用运算符、string和vector的下表运算得到的结果都是**左值**;
 	4. 内置类型和迭代器的递增递减运算符作用于左值对象，其前置版本得到的结果也是左值;
 
-**decltype**
+**decltype :**
 ```c++
 decltype( f() ) sum = x; // sum的类型就是函数f的返回类型
 ```
