@@ -8,7 +8,7 @@ _local static object_ will not be released  after the end of the function, will 
 
 **function pointer :**
 
-```
+```c++
 // 定义函数指针
 typedef char (*FUN) (int, char);
 FUN fp = fun;
