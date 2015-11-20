@@ -1,6 +1,6 @@
 # Learn
 
-Contains all of the programming learn notes and sample projects, including [C++](./C++ Primer),[Data Structure](./Data Structure),[Algorithms](./Algorithms);
+Contains all of the programming learn notes and sample projects;
 
 **NOTES:**
 * **C++**
