@@ -43,7 +43,6 @@ char& get_val(string& str, string::size_type index){
 
 get_val(str, 0) = 'a';
 ```
-
 列表初始化返回值，用于初始化返回的临时量;
 ```c++
 vector<string> process(){
@@ -56,6 +55,19 @@ vector<string> process(){
 尾置返回类型，用于定义返回类型较为复杂的函数;
 ```c++
 auto func(int i) -> int(*)[10]; // 返回指向含有10个int元素的数组指针
+```
+
+#### overloaded
+拷贝操作会忽略[top-level const](/C++ Primer/Documentations/Variable.md#top-level const & low-level const)(`int* const p`)，所以一个拥有top-level const的形参无法和一个没有top-level const的形参区分开，所以通过区分形参是否具有top-level const是无法实现函数重载，相反可以通过区分low-level const的形参实现函数重载;
+```c++
+int Fun(int);
+int Fun(const int);			// 重复定义函数Fun
+
+int Fun(int*);
+int Fun(int* const);		// 重复定义函数Fun
+
+int Fun(int*);
+int Fun(const int*);		// 重载函数Fun
 ```
 
 #### assert
