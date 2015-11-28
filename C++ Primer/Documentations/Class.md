@@ -71,7 +71,8 @@ MyClass::MyClass(const MyClass& cls)
 #### copy-assignment operator
 
 ```c++
-MyClass& operator=(const MyClass& cls){
+MyClass& operator=(const MyClass& cls)
+{
 	// 错误的工作方式，典型情况：右侧对象是其自身
 	delete this->s;
 	this->s = cls.s;
@@ -89,13 +90,15 @@ MyClass& operator=(const MyClass& cls){
 - 对于一个赋值运算符，一个好的模式就是先将右侧运算对象拷贝到一个临时变量中
 - 对定义有swap函数的类，copy and swap，自动处理自赋值以及天然的异常安全
 ```c++
-void swap(MyClass& cls1, MyClass& cls2){
+void swap(MyClass& cls1, MyClass& cls2)
+{
 	using std::swap;
 	swap(cls1.p, cls2.p); // 并未限定使用std::swap
 }
 
 // cls是按值传递的，将会调用拷贝构造函数，函数调用结束即被销毁
-MyClass& MyClass::operator=(MyClass cls){
+MyClass& MyClass::operator=(MyClass cls)
+{
 	swap(*this, cls);
 	return *this;
 }
@@ -112,7 +115,8 @@ private:
 };
 
 inline 										// swap的存在目的即是优化代码，所以应当定义为inline
-void swap(MyClass& cls1, MyClass& cls2){
+void swap(MyClass& cls1, MyClass& cls2)
+{
 	//string* tmp = cls2.p;
 	//cls1.p = cls2.p;
 	//cls2.p = tmp;
@@ -123,7 +127,7 @@ void swap(MyClass& cls1, MyClass& cls2){
 ```
 swap函数应当是friend函数，以便于访问class成员，以及满足交换律，对于分配了资源的类，swap是一种很重要的优化手段(对于排序等需要对成员进行交换的算法);
 
-#### Copy control
+#### Copy control & Resource manager
 
 > 当一个类的成员是不能拷贝、赋值或销毁时，该类的合成拷贝控制成员都将被定义为删除的;（删除的或不可访问的析构函数、引用成员、无法默认构造的const成员）
 
@@ -141,7 +145,8 @@ MyClass::MyClass(const MyCalss& cls)
 	++*use;
 }
 
-MyClass& MyClass::operator=(const MyClass& cls){
+MyClass& MyClass::operator=(const MyClass& cls)
+{
 	// 增加右侧运算对象的引用计数
 	++*cls.use;	
 	string* tmp_p = cls.p;
@@ -155,9 +160,81 @@ MyClass& MyClass::operator=(const MyClass& cls){
 	return *this;
 }
 
-MyClass::~MyClass(){
+MyClass::~MyClass()
+{
 	if(--*use == 0){
 		delete p;
 	}
 }
 ```
+
+#### Move constructor & Move-assignment operator
+
+```c++
+MyClass::MyClass(MyClass&& cls) noexcept   // 移动操作不会抛出任何异常，以此通知标准库，避免不必要的操作
+: p(cls.p)						// 直接将p指向移动对象的内存
+{
+	cls.p = nullptr;			// 在将移动对象指向nullptr，避免移动对象析构造成数据失效（析构安全）
+}
+
+MyClass& MyClass::opertator=(MyClass& cls) noexcept
+{
+	// 处理自赋值
+	if(this != &cls){
+		free();				// 释放已有元素
+		p = cls.p;
+
+		cls.p = nullptr;	// 至于析构安全状态
+	}
+	return *this;
+}
+```
+定义了move constructor和move-assignment operator的类，必须也定义自己的copy control，否则这些move control都将会默认为删除的;
+
+- **移动右值，拷贝左值（响应的左值右值，调用响应的拷贝或移动控制函数）**
+- **如果不可移动，右值也被拷贝（MyClass&& 可以转换为const MyClass&）**
+- **move and copy with swap function**
+```c++
+// 实参进行拷贝初始化，则根据传入的值决定使用copy constructor或move constructor —— 左值拷贝，右值移动
+// 当cls离开作用域后，自动被销毁
+MyClass& MyClass::operator=(MyClass cls)
+{
+	swap(*this, cls);
+	return *this;
+}
+
+cls = cls2;				// 拷贝构造函数拷贝cls2
+cls = std::move(cls2)	// 移动构造函数移动cls2
+```
+
+**由于一个以后源对象具有不确定的状态，对其调用std::move是一个非常危险的行为; 当我们调用move时，必须绝对确认以后源对象没有其他用户; 在move constructor和move-assignment operator这些类实现代码之外的地方，只有当我们确信需要进行移动操作切移动操作是安全的时候，才可以使用std::move**
+
+#### 引用限定符
+
+指定this是一个左值或者是一个右值，即调用者（对象）是左值或者右值; 如果定义两个或两个以上的重载函数，要么所有函数都加上引用限定符，要么都不加;
+```c++
+MyClass MyClass::RetVal(){}
+MyClass& MyClass::RetRef(){}
+
+// this为右值，即本对象为右值，进行当该类对象为右值时应当进行的操作，比如进行源址排序
+// 当该对象是右值时，即表明其没有其他用户，我们可以安全的改变该对象
+MyClass MyClass::Sorted() &&
+{
+	sort(data.begin(), data.end());
+
+	return *this;
+}
+
+// this为左值，即本对象为左值，进行当该类对象为左值时应担进行的操作
+MyClass MyClass::Sorted() const &
+{
+	MyClass cls(*this);
+	sort(cls.data.begin(), cls.data.end());
+	return cls;
+}
+
+RetVal.Sorted();
+RetRef.Sorted();
+```
+
+#### 合成的copy control以及move control有可能是删除的

@@ -3,8 +3,6 @@
 ****************************************************/
 #include <string>
 
-using namespace std;
-
 namespace Learn{
 
 	class MyClass{
@@ -14,7 +12,7 @@ namespace Learn{
 
 		MyClass();
 
-		MyClass(string);
+		MyClass(std::string);
 
 		MyClass(const MyClass&);
 
@@ -30,6 +28,6 @@ namespace Learn{
 
 	MyClass CopyClass(MyClass);
 
-	MyClass CopyClass(string);
+	MyClass CopyClass(std::string);
 
 }

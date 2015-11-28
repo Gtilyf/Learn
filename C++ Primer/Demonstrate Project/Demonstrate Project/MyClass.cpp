@@ -21,6 +21,7 @@ namespace Learn{
 		cout << "call constructor MyClass(string)" << endl;
 	}
 
+	// 使用swap函数, 自动处理自赋值情况以及天然的异常安全
 	MyClass& MyClass::operator=(MyClass cls){
 		cout << "call copy-assignment operator" << endl;
 
