@@ -120,7 +120,7 @@ void Fun(int&& i){
 	// 按值传入参数，左值拷贝，右值移动（存在移动构造函数）
 	void fun(MyClass cls){}	
 
-	fun(std::move(cls)) 	// 显示移动构造实参
+	fun(std::move(cls)) 	// 显式移动构造实参
 
 	// Fun("string")，同样的调用，const string& s会产生一次构造、一次拷贝构造、一次non-trivial析构，移动则只会产生一次移动构造
 	void Fun(const string& s){}
@@ -129,9 +129,9 @@ void Fun(int&& i){
 	- 按值返回
 	```c++
 	vector<string> str_split(const string& s) {
-  	vector<string> v;
+  		vector<string> v;
   	
-  	return v; // v是左值，但优先移动，不支持移动时仍可复制。
+  		return v; // v是左值，但优先移动，不支持移动时仍可复制。
 	}
 	```
 	- 右值引用绑定到生成右值的表达式上，接管其返回的临时量（接受右值表达式）
