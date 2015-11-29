@@ -16,12 +16,12 @@ namespace Learn{
 
 		MyClass(const MyClass&);
 
+		MyClass(MyClass&&);
+
 		MyClass& operator=(MyClass);
 		
 	private:
 	};
-
-	void swap(MyClass&, MyClass&);
 
 	void CopyConstructorTest();
 	void CopyAssignmentOperatorTest();

@@ -91,13 +91,14 @@ int&& rRe1 = std::move(a); 	// 左值显式的转换成右值引用
 
 > Functions that return a nonreference type, alone with the arithmetic, relational, bitwise, and postfix increment/decrement operators, all yield rvalues, we cannot bind an lvalue reference to these expressions, but we can bind either an lvalue reference to `const` or an rvalue reference to such expressions;
 
-##### 移动而并非拷贝
+##### move instead of copy
 
 - 对象拷贝后就立即被销毁的情况下，在重新分配内存的过程中，从久内存将元素拷贝到新内存中是不必要的，更好的方式是移动元素; 
 - 对于一些不支持拷贝的类（IO类），使用移动而不是拷贝;
-- **在移动操作后，移后源对象必须保持有效的、可析构的状态，但是用户不能对其值做任何假设，对移后源对象留下的值不应有任何要求，其值有可能是空或者其他新值亦或是原值，**
+- **在移动操作后，移后源对象必须保持有效的、可析构的状态，但是用户不能对其值做任何假设，对移后源对象留下的值不应有任何要求，其值有可能是空或者其他新值亦或是原值; (析构安全)**
+- **由于一个以后源对象具有不确定的状态，对其调用std::move是一个非常危险的行为; 当我们调用move时，必须绝对确认以后源对象没有其他用户; 在move constructor和move-assignment operator这些类实现代码之外的地方，只有当我们确信需要进行移动操作切移动操作是安全的时候，才可以使用std::move**
 
-##### 右值引用的使用场景
+##### use rvalue reference
 
 ```c++
 int a = 5;
@@ -115,11 +116,44 @@ void Fun(int&& i){
 - 在上诉例子中ref依然是一个左值（变量是左值），有名字的变量都是左值;
 - **实现移动而非拷贝，实现完整的移动语义**
 	- 按值传入参数
-	- 按值返回
-	- 右值引用绑定到生成右值的表达式上，接管其返回的临时量（接受右值表达式）
-	- 对象存入容器
+	```c++
+	// 按值传入参数，左值拷贝，右值移动（存在移动构造函数）
+	void fun(MyClass cls){}	
 
-##### 运算符与左值右值
+	fun(std::move(cls)) 	// 显示移动构造实参
+
+	// Fun("string")，同样的调用，const string& s会产生一次构造、一次拷贝构造、一次non-trivial析构，移动则只会产生一次移动构造
+	void Fun(const string& s){}
+	void Fun(string s){}
+	```
+	- 按值返回
+	```c++
+	vector<string> str_split(const string& s) {
+  	vector<string> v;
+  	
+  	return v; // v是左值，但优先移动，不支持移动时仍可复制。
+	}
+	```
+	- 右值引用绑定到生成右值的表达式上，接管其返回的临时量（接受右值表达式）
+	```c++
+	vector<string> str_split(const string& s);
+
+	// 移动构造v; 如果没有移动语义，则以拷贝构造，先为v申请内存，复制数据，再析构临时对象
+	vector<string> v = str_split("hello word");
+	// 移动赋值; 如果没有移动语义，则先释放v2原数据，再将临时变量中的数据复制给v2，再析构临时对象
+	vector<string> v2;
+	v2 = str_split("hello word");
+	```
+	- 对象存入容器
+	```c++
+	void push_back(const T&);
+	void push_back(T&&);		// 直接接管对象内存，以后源对象已确定没有其他使用者，并且不再做赋值、销毁之外的操作
+	```
+	- vector增长：vector增长时，会重新申请一块内存，如果没有移动语义，则需拷贝并删除;
+	- unique_ptr放入容器
+	- thread的传递
+
+##### operator and lvalue & rvalue
 
 - 赋值运算符需要一个（非常量）左值作为其左侧运算对象，得到的结果仍然是一个左值;
 - 取地址运算符作用于一个左值对象，返回一个该运算对象的指针，该指针是一个**右值**;

@@ -18,10 +18,15 @@ namespace Learn{
 	}
 
 	MyClass::MyClass(string s){
-		cout << "call constructor MyClass(string)" << endl;
+		cout << "Call constructor MyClass(string)" << endl;
+	}
+
+	MyClass::MyClass(MyClass&& cls){
+		cout << "Call move constructor" << endl;
 	}
 
 	// 使用swap函数, 自动处理自赋值情况以及天然的异常安全
+	// 包含移动赋值以及拷贝赋值
 	MyClass& MyClass::operator=(MyClass cls){
 		cout << "call copy-assignment operator" << endl;
 

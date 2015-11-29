@@ -195,7 +195,7 @@ MyClass& MyClass::opertator=(MyClass& cls) noexcept
 - **如果不可移动，右值也被拷贝（MyClass&& 可以转换为const MyClass&）**
 - **move and copy with swap function**
 ```c++
-// 实参进行拷贝初始化，则根据传入的值决定使用copy constructor或move constructor —— 左值拷贝，右值移动
+// 实参初始化，根据传入的值决定使用copy constructor或move constructor —— 左值拷贝，右值移动
 // 当cls离开作用域后，自动被销毁
 MyClass& MyClass::operator=(MyClass cls)
 {
@@ -206,8 +206,6 @@ MyClass& MyClass::operator=(MyClass cls)
 cls = cls2;				// 拷贝构造函数拷贝cls2
 cls = std::move(cls2)	// 移动构造函数移动cls2
 ```
-
-**由于一个以后源对象具有不确定的状态，对其调用std::move是一个非常危险的行为; 当我们调用move时，必须绝对确认以后源对象没有其他用户; 在move constructor和move-assignment operator这些类实现代码之外的地方，只有当我们确信需要进行移动操作切移动操作是安全的时候，才可以使用std::move**
 
 #### 引用限定符
 
