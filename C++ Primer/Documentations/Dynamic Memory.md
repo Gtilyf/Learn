@@ -15,7 +15,10 @@ shared_ptr<MyClass> Fun(){
 
 	return cls;			// 在该内存指向的对象不在使用的时候释放，调用destructor function
 }
-// shared_ptr基本操作
+```
+
+shared_ptr基本操作:
+```c++
 shared_ptr<MyClass> p = make_shared<MyClass>("hello world");		// 根据传入参数调用MyClass对应的constructor function
 if(p->empty()){}		// 判断p是否是一个为初始化的指针
 // 交换指针p、q
