@@ -2,6 +2,7 @@
 
 ****************************************************/
 #include <string>
+#include <memory>
 
 namespace Learn{
 
@@ -19,12 +20,17 @@ namespace Learn{
 		MyClass(MyClass&&);
 
 		MyClass& operator=(MyClass);
+
+		~MyClass();
 		
+		int i;
 	private:
 	};
 
 	void CopyConstructorTest();
 	void CopyAssignmentOperatorTest();
+	std::shared_ptr<MyClass> SmartMemoryTest();
+	MyClass* DynamicMemoryTest();
 
 	MyClass CopyClass(MyClass);
 
