@@ -9,6 +9,10 @@ void Fun(shared_ptr<int> p){
 	cout << p.use_count() << endl;
 }
 
+void Fun(unique_ptr<int> p){
+	
+}
+
 int main(){
 
 	//Learn::CopyAssignmentOperatorTest();
@@ -30,6 +34,8 @@ int main(){
 	p = make_shared<int>(2);
 
 	cout << q.use_count() << endl;
+
+	Fun(unique_ptr<int>(a));
 
 	getchar();
 

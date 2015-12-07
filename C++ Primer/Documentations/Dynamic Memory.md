@@ -1,4 +1,4 @@
-# Class
+# Dynamic Memory
 
 > 总结自C++ Primer, C++ Dynamic Memory
 
@@ -75,4 +75,38 @@ cout << *a << endl;
 
 #### unique_ptr
 
+一个unique_ptr拥有它指向的对象，不支持普通的拷贝或者赋值操作，只有在传递参数或者返回unique_ptr的时候会执行拷贝（即该unique_ptr将要被销毁的情况）。
+```c++
+unique_ptr<int> p(new int(3));
+
+int* a = p.release();			// p放弃对指针的控制权，返回指针，并将p置为空
+p.reset();
+p.reset(q);						// p绑定新的指针q
+
+// 调用release和reset将指针的所有权从一个(非const)unique_ptr转移给另一个unique
+unique_ptr<int> p2(p1.release());
+p2.reset(p3.release());
+
+void Fun(unique_ptr<int> p){}
+Fun(unique_ptr<int>(a));
+
+// 给unique_ptr传递自定义删除器
+unique_ptr<int, decltype(delete_fun)*> p(a, delete_fun);
+```
+
 #### weak_ptr
+
+#### Allocator
+
+将内存非配与对象创建分离，在需要的时候才进行对象创建的工作。
+```c++
+allocator<string> alloc;
+auto const p = alloc.allocator(n);		// 分配n个未初始化的string内存空间
+
+p.constructor(p++, "hello");			// 创建对象
+p.destroy(--p);							// 销毁该位置的对象
+p.deallocator(p, n);					// 释放内存，n必须为p分配时的大小
+
+auto q = uninitinalized_copy(v.begin(), v.end(), p);	// q指向最后一个copy元素的下一地址
+uninitinalized_fill_n(q, v.size(), "hello");			// 从q开始，构造v.size()个相同值的对象
+```

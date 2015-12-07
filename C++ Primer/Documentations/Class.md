@@ -236,3 +236,78 @@ RetRef.Sorted();
 ```
 
 #### 合成的copy control以及move control有可能是删除的
+
+#### Operator override
+
+- 当在内置的操作运算符和我们自己的操作之间存在逻辑映射关系的时候，运算符重载的效果最好.
+- 如果类含有算术运算符或者位运算符，则最好也提供对应的符合赋值运算符。
+- 赋值(=)、下标([ ])、调用(())和成员访问(->)运算符必须是类成员;
+- 复合赋值运算符应当是类成员，但也并非必须;
+- 改变对象状态或者与给定类型密切相关的运算符，如递增(++)、递减(--)、解引用(*)运算符应当是类成员;
+- 具有对称性的运算符可以转换任意一端的运算对象，如算术、相等性、关系、和位运算符等，应当是非类成员;
+
+```c++
+// 重载<<与>>运算符
+ostream& operator<<(ostream& os, const MyClass& cls){
+	os << cls.s;
+	return os;
+}
+istream& operator>>(istream& is, MyClass& cls){
+	is >> cls.s;
+	return is;
+}
+
+// 如果类同时定义了算术运算符和相关的符合赋值运算符，通常情况下应该使用符合赋值运算符实现算术运算符
+MyClass& MyClass::operator+=(const MyClass& cls){
+	this.s += cls.s;
+	return *this;
+}
+
+MyClass operator+(const MyClass& cls1, cont MyClass& cls2){
+	MyClss sum = cls1;
+	sum += cls2;
+	return sum;
+}
+
+// 关系运算符以及相等运算符
+bool operator==(const MyClass& cls1, const MyClass& cls2){
+	return cls1.s == cls2.s;
+}
+
+bool operator>(const MyClass& cls1, const MyClass& cls2){
+	return cls1.s > cls2.s;
+}
+
+// 下标运算符，表示容器的类
+std::string& MyClass::operator[](std::size_t i){
+	return this.s[i];
+}
+
+// 前置递增、递减
+MyClass& MyClass::operator++(){
+	MyClass cls = *this;
+	++*this;
+	return cls;
+}
+MyClass& MyClass::operator--(){}
+// 后置递增、递减
+MyClass MyClass::operator++(int){}
+MyClass MyClass::operator--(ini){}
+```
+
+**重载调用运算符以及函数对象：**
+```c++
+class MyClass{
+public:
+	MyClass(ostream &o = cout, char c = ' ') : os(0), sep(c) {}
+	void operator()(cosnt string& s) const { os << s << sep; }
+private:
+	ostream& os;
+	char sep;
+};
+
+MyClass cls;
+cls("Hello");
+
+for_each(vs.begin(), vs.end(), MyClass(cout, '\n');
+```
