@@ -24,12 +24,18 @@
     <ClCompile Include="FileUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AccessControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AccessControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
