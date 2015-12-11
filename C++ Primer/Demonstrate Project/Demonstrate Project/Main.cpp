@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <utility>
+#include "AccessControl.h"
 
 using namespace std;
 
@@ -22,20 +23,27 @@ int main(){
 
 	cout << cls->i << endl;*/
 
-	int* a(new int(3));
+	//int* a(new int(3));
 
 	/*shared_ptr<int> p(a);
 
 	shared_ptr<int> q(a);*/
 
-	shared_ptr<int> p = make_shared<int>(*a);
+	/*shared_ptr<int> p = make_shared<int>(*a);
 	shared_ptr<int> q = p;
 
 	p = make_shared<int>(2);
 
 	cout << q.use_count() << endl;
 
-	Fun(unique_ptr<int>(a));
+	Fun(unique_ptr<int>(a));*/
+
+	int i = 1;
+	B b;
+	//B b1(b);
+	B b2(std::move(b));
+
+	//b = b1;
 
 	getchar();
 

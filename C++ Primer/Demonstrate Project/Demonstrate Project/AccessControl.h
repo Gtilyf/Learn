@@ -1,8 +1,17 @@
 
+
 class A
 {
 public:
 	int publicA;
+
+	A();
+	A(int i);
+
+	A(const A&);
+	A(A&&) noexcept;
+	A& operator=(A);
+
 private:
 	int privateA;
 protected:
@@ -15,6 +24,8 @@ class B : public A
 	friend void Fun(B b);
 
 public:
+	using A::A;
+
 	void Fun(){
 		int a = publicA;
 		a = protectedA;
@@ -24,9 +35,9 @@ private:
 };
 
 // 只能访问public成员，protected成员是不可访问的
-void NotFriendFun(B b){
-	int a = b.publicA;
-}
+void NotFriendFun(B b);
+//	int a = b.publicA;
+//}
 
 class C : protected A
 {
@@ -44,9 +55,7 @@ private:
 };
 
 // 都不能访问，public成员变成protected
-void NotFriendFun(C c){
-
-}
+void NotFriendFun(C c);
 
 class D : private A
 {
@@ -63,9 +72,7 @@ private:
 };
 
 // 所有成员都变成private
-void NotFriendFun(D d){
-
-}
+void NotFriendFun(D d);
 
 class E : public B
 {
@@ -76,9 +83,9 @@ public:
 	}
 };
 
-void NotFriendFun(E e){
-	int a = e.publicA;
-}
+void NotFriendFun(E e);
+//	int a = e.publicA;
+//}
 
 class F : public C
 {
@@ -90,9 +97,7 @@ public:
 };
 
 // 都不可访问
-void MotFriendFun(F f){
-	
-}
+void MotFriendFun(F f);
 
 class G : public D
 {
@@ -104,18 +109,3 @@ public:
 	}
 private:
 };
-
-void Fun(B b){
-	int a = b.publicA;
-	a = b.protectedA;
-}
-
-void Fun(C c){
-	int a = c.protectedA;
-	a = c.publicA;
-}
-
-void Fun(D d){
-	d.protectedA;
-	d.publicA;
-}
