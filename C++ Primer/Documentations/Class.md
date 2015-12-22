@@ -284,6 +284,11 @@ bool operator>(const MyClass& cls1, const MyClass& cls2){
 std::string& MyClass::operator[](std::size_t i){
 	return this.s[i];
 }
+// 常量对象调用，避免对返回值赋值
+const std::string& MyClass::operator[](std::size_t i) const
+{
+	return this.s[i];
+}
 
 // 前置递增、递减
 MyClass& MyClass::operator++(){

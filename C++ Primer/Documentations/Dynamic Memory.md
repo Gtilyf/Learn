@@ -38,8 +38,8 @@ p.reset();					// 释放p，则p指向的对象a也就被释放了，结果导�
 cout << *q << endl;
 // 使用make_share分配对象
 shared_ptr<int> q(a);
-make_share<int> q(*a);		// make_share重新创建了一个以*a为初始值的对象，是p绑定到该内存
-p.reset();					// 释放p指向的内存，但因其是重新分配的对象，不会对源对象即a造成影响
+shared_ptr q = make_share<int>(*a);		// make_share重新创建了一个以*a为初始值的对象，是q绑定到该内存
+p.reset();								// 释放p指向的内存，但因其是重新分配的对象，不会对源对象即a造成影响
 cout << *q << endl;
 
 // 或者使用get去初始化另一个只能指针也会导致多个不同的只能指针绑定到同一块内存上
@@ -52,7 +52,7 @@ cout << *p << endl;
 ```
 > get用来将指针的访问权限传递给代码，只有在确定代码不会delete指针的情况下才能使用get。特别是永远不要使用get去初始化另一个只能指针或者为另一个智能指针赋值
 
-**也不要将shared_ptr与内置指针混用，当我们将一个shared_ptr绑定到一个内置指针上时，我们就将内存管理的人物交给了这个shared_ptr，那么我们就不应该使用内置指针来访问shared_ptr指向的内容了，因为我们无法知道该对象何时被销毁**
+**也不要将shared_ptr与内置指针混用，当我们将一个shared_ptr绑定到一个内置指针上时，我们就将内存管理的任务交给了这个shared_ptr，那么我们就不应该使用内置指针来访问shared_ptr指向的内容了，因为我们无法知道该对象何时被销毁**
 ```c++
 void Fun(shared_ptr<int> p){}
 int* a(new int(4));
@@ -100,12 +100,14 @@ unique_ptr<int, decltype(delete_fun)*> p(a, delete_fun);
 
 将内存非配与对象创建分离，在需要的时候才进行对象创建的工作。
 ```c++
+#include <memory>
+
 allocator<string> alloc;
 auto const p = alloc.allocator(n);		// 分配n个未初始化的string内存空间
 
-p.constructor(p++, "hello");			// 创建对象
-p.destroy(--p);							// 销毁该位置的对象
-p.deallocator(p, n);					// 释放内存，n必须为p分配时的大小
+alloc.constructor(p++, "hello");			// 创建对象
+alloc.destroy(--p);							// 销毁该位置的对象
+alloc.deallocator(p, n);					// 释放内存，n必须为p分配时的大小
 
 auto q = uninitinalized_copy(v.begin(), v.end(), p);	// q指向最后一个copy元素的下一地址
 uninitinalized_fill_n(q, v.size(), "hello");			// 从q开始，构造v.size()个相同值的对象

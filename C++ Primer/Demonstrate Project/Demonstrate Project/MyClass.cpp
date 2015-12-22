@@ -14,18 +14,31 @@ namespace Learn{
 		: i(1)
 	{
 		WriteLog("call constructor MyClass()", "log.txt");
+		cout << "call constructor MyClass()" << endl;
 	}
 
-	MyClass::MyClass(const MyClass& cls){
+	MyClass::MyClass(int j)
+		: i(j)
+		, privateI(j)
+	{}
+
+	MyClass::MyClass(const MyClass& cls)
+		: i(cls.i)
+		, privateI(cls.privateI)
+	{
 		WriteLog("Call copy constructor", "log.txt");
+		
+		cout << "Call copy constructor" << endl;
 	}
 
 	MyClass::MyClass(string s){
 		WriteLog("Call constructor MyClass(string)", "log.txt");
+		cout << "Call constructor MyClass(String)" << endl;
 	}
 
 	MyClass::MyClass(MyClass&& cls){
 		WriteLog("Call move constructor", "log.txt");
+		cout << "call move constructor" << endl;
 	}
 
 	MyClass::~MyClass(){
@@ -40,6 +53,11 @@ namespace Learn{
 		swap(*this, cls);
 
 		return *this;
+	}
+
+	void MyClass::Fun(MyClass cls)
+	{
+		cout << cls.privateI << endl;
 	}
 
 	void swap(MyClass& cls1, MyClass& cls2){
@@ -57,7 +75,31 @@ namespace Learn{
 
 	void CopyAssignmentOperatorTest(){
 		MyClass cls;
-		cls = CopyClass(cls); // 调用拷贝赋值运算符
+		CopyClass(cls); // 调用拷贝赋值运算符
+		MyClass cls1;
+		cls1 = std::move(cls);
+	}
+
+	void MoveClassTest()
+	{
+		MyClass cls;
+		MoveClass3(cls);
+		MoveClass3(std::move(cls));
+	}
+
+	void MoveClass1(MyClass&& cls)
+	{
+		
+	}
+
+	void MoveClass2(MyClass&& cls)
+	{
+
+	}
+
+	void MoveClass3(MyClass cls)
+	{
+
 	}
 
 	shared_ptr<MyClass> SmartMemoryTest(){

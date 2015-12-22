@@ -12,6 +12,7 @@ namespace Learn{
 		friend void swap(MyClass&, MyClass&);
 
 		MyClass();
+		MyClass(int j);
 
 		MyClass(std::string);
 
@@ -22,9 +23,12 @@ namespace Learn{
 		MyClass& operator=(MyClass);
 
 		~MyClass();
-		
+
+		void Fun(MyClass);
+
 		int i;
 	private:
+		int privateI;
 	};
 
 	void CopyConstructorTest();
@@ -33,6 +37,11 @@ namespace Learn{
 	MyClass* DynamicMemoryTest();
 
 	MyClass CopyClass(MyClass);
+	void MoveClass1(MyClass&&);
+	void MoveClass2(MyClass&&);
+	void MoveClass3(MyClass);
+
+	void MoveClassTest();
 
 	MyClass CopyClass(std::string);
 

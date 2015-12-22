@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include "AccessControl.h"
+#include <vector>
 
 using namespace std;
 
@@ -16,6 +17,17 @@ void Fun(unique_ptr<int> p){
 
 int main(){
 
+	Learn::MyClass cls(3);
+
+	Learn::MyClass cls1;
+	cls1.Fun(cls);
+
+	//Learn::MoveClassTest();
+
+	//vector<int> v = {1, 2, 3};
+
+	//cout << v[1] << endl;
+
 	//Learn::CopyAssignmentOperatorTest();
 	//Learn::CopyConstructorTest();
 
@@ -25,23 +37,25 @@ int main(){
 
 	//int* a(new int(3));
 
-	/*shared_ptr<int> p(a);
+	///*shared_ptr<int> p(a);
 
-	shared_ptr<int> q(a);*/
+	//shared_ptr<int> q(a);*/
 
-	/*shared_ptr<int> p = make_shared<int>(*a);
-	shared_ptr<int> q = p;
+	//shared_ptr<int> p(a);
+	//shared_ptr<int> q = make_shared<int>(*a);
 
-	p = make_shared<int>(2);
+	/*p = make_shared<int>(2);*/
 
-	cout << q.use_count() << endl;
+	//p.reset();
 
-	Fun(unique_ptr<int>(a));*/
+	//cout << *q << endl;
 
-	int i = 1;
-	B b;
-	//B b1(b);
-	B b2(std::move(b));
+	/*Fun(unique_ptr<int>(a));*/
+
+	//int i = 1;
+	//B b;
+	////B b1(b);
+	//B b2(std::move(b));
 
 	//b = b1;
 

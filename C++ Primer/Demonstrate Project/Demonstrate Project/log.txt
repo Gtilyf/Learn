@@ -1,0 +1,52 @@
+call constructor MyClass()
+Call copy constructor
+Call copy constructor
+Call move constructor
+call destructor
+call destructor
+call destructor
+call destructor
+call constructor MyClass()
+Call copy constructor
+Call copy constructor
+Call move constructor
+call destructor
+call destructor
+call destructor
+call destructor
+call constructor MyClass()
+Call copy constructor
+Call copy constructor
+Call move constructor
+call destructor
+call destructor
+call destructor
+call destructor
+call constructor MyClass()
+Call copy constructor
+Call copy constructor
+Call move constructor
+call destructor
+call destructor
+call destructor
+call constructor MyClass()
+Call move constructor
+call destructor
+call destructor
+call destructor
+call constructor MyClass()
+Call copy constructor
+call destructor
+Call move constructor
+call destructor
+call destructor
+call constructor MyClass()
+Call copy constructor
+call destructor
+call destructor
+call destructor
+call constructor MyClass()
+Call copy constructor
+call destructor
+call destructor
+call destructor

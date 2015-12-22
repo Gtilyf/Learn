@@ -1,4 +1,4 @@
-
+#include <stdexcept>
 
 class A
 {
@@ -9,7 +9,7 @@ public:
 	A(int i);
 
 	A(const A&);
-	A(A&&) noexcept;
+	A(A&&) _NOEXCEPT;
 	A& operator=(A);
 
 private:

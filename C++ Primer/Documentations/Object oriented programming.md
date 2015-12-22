@@ -29,7 +29,7 @@ BaseClass& cls = derviedCls;
 ```c++
 class AbstractClass{
 public:
-	void Fun() = 0;
+	virtual void Fun() = 0;
 }
 ```
 
