@@ -2,19 +2,43 @@
 */
 
 #include "SequentialLineraList.hpp"
+#include "LinkedLineraList.hpp"
 
 using namespace std;
+using namespace DS;
+
+void PrintList(SqList<int>& sl);
 
 int main(){
-	DS::SqList<string> sl;
-	
+	LinkedList<int> ll = {1, 2};
 
-	DS::SqList<string> sl1 = sl;
+	// ≤‚ ‘ SequentiaLineraList
+	SqList<int> sl;
+	sl.FrontInsert(2);
+	sl.FrontInsert(1);
+	sl.BackInsert(3);
 
-	sl1.Union(sl);
+	PrintList(sl);
 
-	cout << sl.Size() << endl;
+	sl.Remove(2);
+	PrintList(sl);
+
+	cout << sl.LocalElem(2);
+
+	SqList<int> sl1 = {4, 5, 6};
+	PrintList(sl1);
+
+	sl += sl1;
+	PrintList(sl);
 
 	getchar();
 	return 0;
+}
+
+void PrintList(SqList<int>& sl)
+{
+	for (int i = 0; i < sl.Size(); i++)
+		cout << sl[i] << " ";
+
+	cout << endl;
 }
