@@ -12,5 +12,8 @@ Contains all of the programming learn notes and sample projects;
 	- [Template](./C++ Primer/Template.md#template)
 	- [object oriented programming](./C++ Primer/Object oriented programming.md#OOP)
 
+- **Data Structure**
+	- [Linear List](./Data Structure/Linear_List.md)
+
 - **Unity**
 	- [3D Physics](./Unity/3D Physics.md) : Unity 3D physics system;
