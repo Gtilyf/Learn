@@ -16,10 +16,9 @@ namespace DS{
 	void swap(SqList<T>& sl1, SqList<T>& sl2)
 	{
 		using std::swap;
-		swap(sl1._length, sl2._length);
-		swap(sl1._base, sl2._base);
-		swap(sl1._capacity, sl2._capacity);
-		swap(sl1._isOrdered, sl2._isOrdered);
+		swap(sl1._first, sl2._first);
+		swap(sl1._last, sl2._last);
+		swap(sl1._end, sl2._end);
 	}
 
 	template<typename T>
@@ -32,7 +31,7 @@ namespace DS{
 	template<typename T>
 	bool operator==(const SqList<T>& sl1, const SqList<T>& sl2)
 	{
-		return sl1._base == sl2._base;
+		return sl1._first == sl2._first;
 	}
 
 	template<typename T>
@@ -44,7 +43,7 @@ namespace DS{
 	template<typename T>
 	bool operator>(const SqList<T>& sl1, const SqList<T>& sl2)
 	{
-		return sl1.Size() > sl2.Size();
+		return sl1.size() > sl2.size();
 	}
 
 	template<typename T>
@@ -54,97 +53,67 @@ namespace DS{
 	}
 
 	template<typename T>
-	class SqList{
+	class SqList {
 
-		typedef int size_type;
+		typedef std::size_t size_type;
+		typedef T* pointer;
+		typedef T& reference;
 
 	public:
 		SqList()
-			: _capacity(LIST_INIT_SIZE)
-			, _length(0)
-			, _isOrdered(false)
 		{
-			std::allocator<T> alloc;
-			_base = alloc.allocate(LIST_INIT_SIZE);
+			_Create_Mem(LIST_INIT_SIZE);
+			_last = _first;
 		}
 
 		// 初始化n个相同的元素，对元素进行拷贝
-		SqList(const T& data, size_type count, bool order = false)
-			: _capacity(_Rise_size(count))
-			, _isOrdered(order)
+		SqList(size_type count, const T& val)
 		{
-			std::allocator<T> alloc;
-
 			if (count <= 0)
 			{
 				SqList();
 				return;
 			}
 
-			_base = alloc.allocate(_capacity);
-
-			std::uninitialized_fill_n(_base, count, data);
-			_length = count;
+			_Create_Mem(_Rise_size(count));
+			_last = std::uninitialized_fill_n(_first, count, val);
 		}
 
 		// 初始化只有一个成员的list
-		SqList(const T& data, bool order = false)
-			: _capacity(LIST_INIT_SIZE)
-			, _length(1)
-			, _isOrdered(order)
+		SqList(const T& val)
 		{
-			std::allocator<T> alloc;
-
-			_base = alloc.allocate(LIST_INIT_SIZE);
-			alloc.construct(_base, data);
+			_Create_Mem(LIST_INIT_SIZE);
+			_last = std::uninitialized_fill_n(_first, size_type(1), val);
 		}
 
 		// 释放所有的内存空间
 		~SqList()
 		{
-			std::allocator<T> alloc;
-			alloc.deallocate(_base, _capacity);
-			_base = nullptr;
-			_capacity = 0;
-			_length = 0;
+			_alloc.deallocate(_first, capacity());
+			_first = _end = _last = nullptr;
 		}
 
 		// 拷贝构造
 		SqList(const SqList& sl)
-			: _capacity(sl._capacity)
-			, _length(sl._length)
-			, _isOrdered(sl._isOrdered)
 		{
-			std::allocator<T> alloc;
-			_base = alloc.allocate(_capacity);
-			if (sl._length == 0)
-				return;
-			std::_Wrap_alloc<std::allocator<T>> _alloc(alloc);
-			std::_Uninitialized_copy(sl._base, sl._base + _length, _base, _alloc);
+			_Create_Mem(sl.capacity());
+			_last = std::_Uninitialized_copy(sl.begin(), sl.end(), this->_first, _Get_WrapAlloc());
 		}
 
 		// 移动构造
 		SqList(SqList&& sl) _NOEXCEPT
-			: _capacity(std::move(sl._capacity))
-			, _base(std::move(sl._base))
-			, _length(std::move(sl._length))
-			, _isOrdered(sl._isOrdered)
+			: _first(sl._first)
+			, _end(sl._end)
+			, _last(sl._last)
 		{
-			sl._base = nullptr;
+			sl._first = sl._last = sl._end = nullptr;
 		}
 
 		// 列表初始化
 		SqList(std::initializer_list<T> paras)
-			: _length(paras.size())
-			, _capacity(_Rise_size(paras.size()))
-			, _isOrdered(false)
 		{
-			std::allocator<T> alloc;
-			_base = alloc.allocate(_capacity);
-			if (paras.size() == 0)
-				return;
-			std::_Wrap_alloc<std::allocator<T>> _alloc(alloc);
-			std::_Uninitialized_copy(paras.begin(), paras.end(), _base, _alloc);
+			_Create_Mem(_Rise_size(paras.size()));
+			_last = std::_Uninitialized_copy(paras.begin(), paras.end(), _first, _Get_WrapAlloc());
 		}
 
 		// copy and move assignment operator
@@ -154,117 +123,159 @@ namespace DS{
 			return *this;
 		}
 
-		bool Empty()
+		pointer begin() _NOEXCEPT
 		{
-			return 0 == _length;
+			return (this->_first);
 		}
 
-		size_type Size()
+		pointer end() _NOEXCEPT
 		{
-			return _length;
+			return (this->_last);
 		}
 
-		// 清空list，内存空间保留
-		void Clear()
+		size_type capacity()
 		{
-			std::allocator<T> alloc;
-
-			T* p = _base;
-			for (; _length > 0; _length--)
-				alloc.destroy(p++);
+			return (this->_end - this->_first);
 		}
 
-		// 删除元素，返回该元素的备份
-		T Remove(const size_type index)
+		size_type size()
 		{
-			T* p = _base + index;
-			T rtval = std::move(*p);
-			p = nullptr;
+			return (this->_last - this->_first);
+		}
 
-			_Move_forward(index + 1);
-			_length--;
-			return rtval;
+		bool empty()
+		{
+			return (this->_first == this->_last);
+		}
+
+		void push_back(const T& val)
+		{
+			insert(this->end(), val);
+		}
+
+		void push_back(T&& val)
+		{
+			emplace(this->end(), std::move(val));
+		}
+
+		void emplace_back(T&& val)
+		{
+			if (this->_last == this->_end)
+				_Reverse(1);
+			_alloc.construct(this->_last, std::forward(val));
+			this->_last++;
+		}
+
+		void push_front(const T& val)
+		{
+			insert(this->begin(), val);
+		}
+
+		void push_front(T&& val)
+		{
+			insert(this->begin(), std::move(val));
+		}
+
+		T pop_back()
+		{
+			T elem = *(end() - 1);
+			erase(end() - 1);
+			return elem;
+		}
+
+		T pop_front()
+		{
+			T elem = *(begin());
+			erase(begin());
+			return elem;
+		}
+
+		pointer insert(const pointer where, const T& val)
+		{
+			return (_Insert_n(where, size_type(1), val));
+		}
+
+		template<typename _IteratorType>
+		pointer insert(const pointer where, _IteratorType first, _IteratorType last)
+		{
+			return (_Insert_Range(where, first, last));
+		}
+
+		pointer insert(const pointer where, size_type count, const T& val)
+		{
+			return (_Insert_n(where, count, val));
+		}
+
+		pointer insert(const pointer where, std::initializer_list<T> vals)
+		{
+			return (_Insert_Range(where, vals.begin(), vals.end()));
+		}
+
+		pointer insert(const pointer where, T&& val)
+		{
+			return (emplace(where, val));
+		}
+
+		pointer emplace(const pointer where, T&& val)
+		{
+			emplace_back(val);
+			std::rotate(where, end() - 1, end());
+			return (where);
+		}
+
+		// 删除where处的元素
+		pointer erase(const pointer where)
+		{
+			std::_Move(where + 1, end(), where);
+			_alloc.destroy(this->_last - 1);
+			this->_last--;
+			return where;
+		}
+
+		pointer erase(const pointer first, const pointer last)
+		{
+			if (first >= end() || this->_first > first || this->_last < last || first > last)
+				return pointer();
+
+			if (first == begin() && last == end())
+				clear();
+
+			pointer firstArg = first;
+			pointer _Ptr = std::_Move(last, end(), first);
+			std::_Destroy_range(ptr, end(), _Get_WrapAlloc());
+			return firstArg;
+		}
+
+		reference at(const size_type pos)
+		{
+			return *(this->_first + pos);
+		}
+
+		reference at(const size_type pos) const
+		{
+			return *(this->_first + pos);
+		}
+
+		// 清空list
+		void clear()
+		{
+			_alloc.deallocate(_first, size());
+			_last = _first;
 		}
 
 		// 获得某一元素的位置信息, 使用==关系运算符
-		size_type LocalElem(const T& data)
+		size_type localElem(const T& val)
 		{
-			return _Check_elem(data);
+			return _Check_elem(val);
 		}
 
-		bool Exist(const T& data)
+		bool exist(const T& val)
 		{
-			return (LocalElem(data) > 0);
-		}
-
-		// 返回元素的前驱，如果是首元素，则返回尾元素
-		T& PriorElem(const T& data)
-		{
-			int local = LocalElem(data);
-
-			if (local > 0)
-				return *this[local - 1];
-			else
-				return *this[_length - 1];
-		}
-
-		// 返回元素的后继，如果是尾元素，则返回首元素
-		T& NextElem(const T& data)
-		{
-			int local = LocalElem(data);
-
-			if (local < _length - 1)
-				return *this[local + 1];
-			else
-				return *this[0];
-		}
-
-		// copy插入元素
-		bool Insert(const size_type index, const T& data)
-		{
-			_Reserve(1);
-			_Move_back(index);
-			*(_base + index) = data;
-			_length++;
-			return true;
-		}
-
-		// move插入元素
-		bool Insert(const size_type index, T&& data)
-		{
-			_Reserve(1);
-			_Move_back(index);
-			*(_base + index) = std::move(data);
-			_length++;
-			return true;
-		}
-
-		// 在list尾部插入(copy)
-		bool BackInsert(const T& data)
-		{
-			return Insert(_length, data);
-		}
-
-		// 在list尾部插入(move)
-		bool BackInsert(T&& data)
-		{
-			return Insert(_length, std::move(data));
-		}
-
-		// 在list头部插入(copy)
-		bool FrontInsert(const T& data)
-		{
-			return Insert(0, data);
-		}
-
-		// 在list头部插入(move)
-		bool FrontInsert(T&& data)
-		{
-			return Insert(0, std::move(data));
+			return (localElem(val) > 0);
 		}
 
 		// 对list进行遍历，对所有的元素执行Pred操作
-		bool Traverse(bool (*Pred) (T&))
+		bool Traverse(bool(*Pred) (T&))
 		{
 			for (int i = 0; i < Size(); i++)
 			{
@@ -274,33 +285,26 @@ namespace DS{
 			return true;
 		}
 
-		// 元素访问，返回该元素的引用
-		T& GetElem(const size_type index)
-		{
-			return this->operator[index];
-		}
-
 		T& operator[](const size_type index)
 		{
-			return *(_base + index);
+			return *(this->_first + index);
 		}
 		const T& operator[](const size_type index) const
 		{
-			return *(_base + index);
+			return *(this->_first + index);
 		}
 
-		
 		/*
 			list union，将另一个SqList并入当前SqList;
 			被插入的元素应当和原来的list没有关联，移动或者拷贝
 		*/
 		SqList& Union(SqList sl)
 		{
-			T* first = sl._base;
-			T* last = sl._base + sl.Size();
+			T* first = sl._first;
+			T* last = sl._first + sl.Size();
 			for (; first != last; first++) {
-				if (!Exist(*first))
-					BackInsert(std::move(*first));
+				if (!exist(*first))
+					push_back(std::move(*first));
 			}
 
 			return *this;
@@ -330,14 +334,120 @@ namespace DS{
 	private:
 		// list默认初始容量
 		const size_type LIST_INIT_SIZE = 10;
-		// list当前容量
-		int _capacity;
-		// list元素基址
-		T* _base;
-		// 元素长度
-		int _length;
-		// list是否有序
-		bool _isOrdered;
+		// list位置标记
+		pointer _first;
+		pointer _last;
+		pointer _end;
+
+		std::allocator<T> _alloc;
+
+		std::_Wrap_alloc<std::allocator<T>> _Get_WrapAlloc()
+		{
+			return std::_Wrap_alloc<std::allocator<T>>(_alloc);
+		}
+
+		void _Create_Mem(size_type capacity)
+		{
+			std::allocator<T> alloc;
+			_first = alloc.allocate(capacity);
+			_end = _first + capacity;
+			_alloc = alloc;
+		}
+
+		// copy [first, last) to [dest, ...) where is uninitialized
+		// @return: copy success, return where + (last - first)
+		pointer _UninitCopy(pointer first, pointer last, pointer dest)
+		{
+			return (std::_Uninitialized_copy(first, last, dest, _Get_WrapAlloc());
+		}
+
+		// move [first, last) to [dest, ...) where is uninitialized
+		pointer _UninitMove(pointer first, pointer last, pointer dest)
+		{
+			return (std::_Uninitialized_move(first, last, dest, _Get_WrapAlloc()));
+		}
+
+		pointer _UninitFill(pointer dest, size_type count, const T* val)
+		{
+			std::_Uninitialized_fill_n(dest, count, val, _Get_WrapAlloc());
+			return (dest + count);
+		}
+
+		template<typename _IteratorType>
+		pointer _Insert_Range(pointer where, _IteratorType first, _IteratorType last)
+		{
+			if (first > last || this->_first > where || this->_last < where)
+				return (where);
+
+			size_type offset = where - begin();
+			size_type count = last - first;
+			if (count >= _Unused_capacity())
+				// reallocate
+			{
+				pointer oldFirst = _first;
+				pointer oldLast = _last;
+				size_type oldCapacity = capacity();
+
+				_Create_Mem(_Grow_to(count));
+				pointer ptr = _UninitMove(oldFirst, where, _first);
+				ptr = _UninitCopy(first, last, ptr);
+				_last = _UninitMove(where, oldLast, ptr);
+
+				std::_Destroy_range(oldFirst, oldLast, _Get_WrapAlloc());
+				_alloc.deallocate(oldFirst, oldCapacity);
+			}
+			else
+			{
+				_UninitCopy(first, last, this->_last);
+				std::rotate(where, this->_last, this->_last + count);
+				this->_last += count;
+			}
+
+			return (begin + offset);
+		}
+
+		pointer _Insert_n(pointer where, size_type count, const T& val)
+		{
+			size_type offset = where - begin();
+			if (this->_first > where || this->_last < where)
+				return (where);
+
+			if (count <= 0)
+				;
+			else if (_Unused_capacity() < count)
+				// reallocate
+			{
+				pointer oldFirst = this->_first;
+				pointer oldLast = this->_last;
+				size_type oldCapacity = capacity();
+				T tmpVal = val;
+
+				_Create_Mem(_Grow_to(count));
+				_UninitMove(oldFirst, where, this->_first);
+				_UninitFill(this->_first + offset, count, std::addressof(tmpVal));
+				_UninitMove(where, oldLast, this->_first + offset + count);
+
+				std::_Destroy_range(oldFirst, oldLast, _Get_WrapAlloc());
+				_alloc.deallocate(oldFirst, oldCapacity);
+			}
+			else if (this->_last - where < count)
+			{
+				T tmpVal = val;
+
+				_UninitMove(where, this->_last, this->_last + count);
+				_UninitFill(this->_last, count - (this->_last - where), std::addressof(tmpVal));
+				std::fill(where, this->_last, tmpVal);
+				this->_last += count;
+			}
+			else
+			{
+				pointer oldLast = this->_last;
+				this->_last = _UninitMove(oldLast - count, oldLast, oldLast);
+				std::_Copy_backward(where, oldLast - count, oldLast);
+				std::fill(where, where + count, val);
+			}
+			return (begin() + offset);
+		}
 
 		// 检查元素是否存在
 		// TODO: 使用algorithms find查找元素
@@ -352,30 +462,22 @@ namespace DS{
 			return -1;
 		}
 
-		// 检测下标是否合法
-		bool _Is_legel(const size_type index)
-		{
-			return index > 0 && index < Size();
-		}
-
 		// 返回未使用的容量大小>
 		size_type _Unused_capacity() const _NOEXCEPT
 		{
-			return _capacity - _length;
+			return _end - _last;
 		}
 
 		// 容量增长
-		void _Reallocate(const size_type count)
+		void _Reallocate(const size_type newCapacity)
 		{
-			T* first = _base;
-			T* last = _base + _length;
-			std::allocator<T> alloc;
-			std::_Wrap_alloc<std::allocator<T>> _alloc(alloc);
-			_base = alloc.allocate(count);
-
-			std::_Uninitialized_move(first, last, _base, _alloc);
-			alloc.deallocate(first, _capacity);
-			_capacity = count;
+			pointer first = begin();
+			pointer last = end();
+			size_type oldCapacity = capacity();
+			_Create_Mem(newCapacity);
+			std::_Wrap_alloc<std::allocator<T>> wrap_alloc(_alloc);
+			_last = std::_Uninitialized_move(first, last, _first, wrap_alloc);
+			_alloc.deallocate(first, oldCapacity);
 		}
 
 		// 确定是否有足够的空间
@@ -383,49 +485,22 @@ namespace DS{
 		{
 			if (count < _Unused_capacity())
 				return;
-			else if (count > _Unused_capacity()){
-				size_type newSize = _Rise_size(_capacity);
-				if (count > newSize - _length)
-					newSize = _capacity + count;
-				_Reallocate(newSize);
-			}
+			else if (count > _Unused_capacity())
+				_Reallocate(_Grow_to(count));
+		}
+
+		size_type _Grow_to(sizr_type count)
+		{
+			size_type newSize = _Rise_size(capacity);
+			if (count > newSize - size())
+				newSize = capacity + count;
+			return newSize;
 		}
 
 		// 定义容量增长的方式
 		size_type _Rise_size(const size_type count) const _NOEXCEPT
 		{
 			return count + count / 2;
-		}
-
-		// 将第i位置之后的元素依次向后移动[index, _length)
-		void _Move_back(const size_type index)
-		{
-			if (index >= Size())
-				return;
-
-			T* last = _base + Size();
-			T* dest = _base + index;
-
-			std::allocator<T> alloc;
-			alloc.construct(last);
-
-			for (; last != dest; last--)
-				*last = std::move(*(last - 1));
-		}
-
-		// 将第i位置之后的元素依次向前移动[index, _length)
-		void _Move_forward(const size_type index)
-		{
-			if (index >= Size())
-				return;
-
-			T* dest = _base + index;
-			T* last = _base + Size();
-			for (; dest != last; dest++)
-				*dest = std::move(*(dest));
-
-			std::allocator<T> alloc;
-			alloc.destroy(dest);
 		}
 	};
 

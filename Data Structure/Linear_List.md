@@ -10,7 +10,7 @@
 ![内存结构](./img/Sequential-Linear-List.png)
 - 访问操作: 随机访问，*(_first + n)
 - 插入操作：
-	1) 插入[ first, last )
+	1. 插入[ first, last )
 ![insert range](./img/Sequential-Linear-List-InsertRange.png)
 ```c++
 template<class _FwdIt> inline
@@ -30,7 +30,7 @@ template<class _FwdIt> inline
 		}
 	}
 ```
-	2) 插入val * count
+	2. 插入val * count
 ![insert count * val](./img/Sequential-Linear-List-InsertCount.png)
 ```c++
 template<class _BidIt1,
@@ -43,3 +43,10 @@ template<class _BidIt1,
 	return (_Dest);
 	}
 ```
+
+#### Linked Linear List
+
+线性表的链式存储结构使用一组任意的存储单元进行存储线性表的数据元素，存储结构中需要用指针域指示其前驱以及后继（循环链表）:
+- 内存空间并不连续，不支持随机访问(随机访问需要遍历list，时间复杂度为O(n))，所以不应提供随机访问接口;
+- 不支持随机位置插入元素，应当直接使用确定位置pointer进行插入删除操作;
+![Linked Linear List](./img/Linked-Linear-List.png)
