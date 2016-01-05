@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include <iostream>
+
 namespace DS
 {
 	template<typename T>
@@ -15,39 +17,42 @@ namespace DS
 	class LinkedNote;
 
 	template<typename T>
-	void swap(LinkedList<T>&, LinkedList<T>&)
+	void swap(LinkedList<T>& la, LinkedList<T>& lb)
 	{
-
+		using namespace std::swap;
+		swap(la._head, lb._head);
+		swap(la._length, lb._length);
 	}
 
 	template<typename T>
-	LinkedList<T> operator+(const LinkedList<T>&, const LinkedList<T>&)
+	LinkedList<T> operator+(LinkedList<T> la, LinkedList<T> lb)
 	{
-
+		la += std::move(lb);
+		return la;
 	}
 
 	template<typename T>
-	bool operator==(const LinkedList<T>&, const LinkedList<T>&)
+	bool operator==(const LinkedList<T>& la, const LinkedList<T>& lb)
 	{
-
+		return (la._head == lb._head && la._length == lb._length);
 	}
 
 	template<typename T>
-	bool operator!=(const LinkedList<T>&, const LinkedList<T>&)
+	bool operator!=(const LinkedList<T>& la, const LinkedList<T>& lb)
 	{
-
+		return !(la == lb)
 	}
 
 	template<typename T>
-	bool operator>(const LinkedList<T>&, const LinkedList<T>&)
+	bool operator>(const LinkedList<T>& la, const LinkedList<T>& lb)
 	{
-
+		return (la._length > lb._length);
 	}
 
 	template<typename T>
-	bool operator<(const LinkedList<T>&, const LinkedList<T>&)
+	bool operator<(const LinkedList<T>& la, const LinkedList<T>& lb)
 	{
-
+		return !(la > lb);
 	}
 
 	template<typename T>
@@ -109,21 +114,18 @@ namespace DS
 
 		// 列表初始化
 		LinkedList(std::initializer_list<T> paras)
-			: _length(paras.size())
 		{
 			_Consturct_List(paras.begin(), paras.end());
 		}
 
 		// 初始化含有n个相同的元素elem的list
 		LinkedList(const T& elem, size_type count)
-			: _length(count)
 		{
 			_Consturct_List(elem, count);
 		}
 
 		// 初始化只含有一个元素的list
 		LinkedList(const T& elem)
-			: _length(1)
 		{
 			_Consturct_List(elem, 1);
 		}
@@ -136,7 +138,6 @@ namespace DS
 
 		// copy constructor
 		LinkedList(const LinkedList& ll)
-			: _length(ll._length)
 		{
 			_Create_head();
 			pointer first = ll._head->next;
@@ -166,7 +167,7 @@ namespace DS
 
 		pointer begin()
 		{
-			return (this->_Next_Node(_head));
+			return (this->_Next_node(_head));
 		}
 
 		size_type size()
@@ -176,7 +177,7 @@ namespace DS
 
 		bool empty()
 		{
-			return (_Next_Node(_head) == _head);
+			return (_Next_node(_head) == _head);
 		}
 
 		// 清除所有的元素
@@ -187,12 +188,12 @@ namespace DS
 
 		pointer erase(const pointer where)
 		{
-			pointer ptr _Unlinked_node(where);
+			pointer ptr = _Unlinked_node(where);
 			delete where;
 			return (ptr);
 		}
 
-		pointer erase(const pointer first, const pointer last)
+		pointer erase(pointer first, pointer last)
 		{
 			while (first != last)
 				first = erase(first);
@@ -202,32 +203,32 @@ namespace DS
 
 		pointer push_back(const T& val)
 		{
-			insert(end(), val);
+			return (insert(end(), val));
 		}
 
 		pointer push_back(T&& rval)
 		{
-			emplace(end(), std::forward(rval));
+			return (emplace(end(), std::forward<T>(rval)));
 		}
 
 		pointer emplace_back(T&& rval)
 		{
-			emplace(end(), std::forward(rval));
+			return (emplace(end(), std::forward<T>(rval)));
 		}
 
 		pointer push_front(const T& val)
 		{
-			insert(begin(), val);
+			return (insert(begin(), val));
 		}
 
 		pointer push_front(T&& rval)
 		{
-			emplace(begin(), std::forward(rval));
+			return (emplace(begin(), std::forward<T>(rval)));
 		}
 
 		T pop_back()
 		{
-			T rtVal = _Prev_Node(end())->data;
+			T rtVal = _Prev_node(end())->data;
 			erase(ptr);
 			return rtVal;
 		}
@@ -246,7 +247,7 @@ namespace DS
 
 		T& back()
 		{
-			return (_Prev_Node(end())->data);
+			return (_Prev_node(end())->data);
 		}
 
 		pointer insert(pointer where, const T& val)
@@ -272,30 +273,54 @@ namespace DS
 
 		pointer insert(pointer where, T&& val)
 		{
-			return (emplace(where, std::forward(val)));
+			return (emplace(where, std::forward<T>(val)));
 		}
 
 		pointer emplace(pointer where, T&& rval)
 		{
-			_Create_Node(std::move(rval), _Prev_Node(where), _Next_Node(where));
+			pointer newNode = _Create_node(std::move(rval), _Prev_node(where), where);
+			_Prev_node(where)->next = newNode;
+			where->prev = newNode;
 			_length++;
-			return _Prev_Node(where);
+			return _Prev_node(where);
 		}
 
 		// 在链表尾节点处添加一串节点
-		bool Append(LinkedNode<T>*);
+		void Append(pointer node)
+		{
+			
+		}
 
 		// 对list进行遍历，对所有的元素执行指定操作
-		bool Traverse();
+		bool Traverse()
+		{
+			pointer ptr = begin();
+			for (; ptr != end(); ptr = _Next_node(ptr))
+				std::cout << ptr->data << "\t";
+
+			std::cout << endl;
+
+			return true;
+		}
 
 		// list union，将另一个LinkedList并入当前LinkedList;
 		// 被插入的元素应当和原来的list没有关联，移动或者拷贝
-		LinkedList& Union(LinkedList);
-		LinkedList& operator+=(LinkedList);
+		LinkedList& Union(LinkedList ll)
+		{
+			return *this;
+		}
+
+		LinkedList& operator+=(LinkedList ll)
+		{
+			return this->Union(std::move(ll));
+		}
 
 		// list Merge, 返回新的LinkedList，两个LinkedList的元素并入新的LinkedList
 		// 被插入的元素应当和原来的list没有关联，移动或者拷贝
-		LinkedList Merge(LinkedList, LinkedList);
+		LinkedList Merge(LinkedList la, LinkedList lb)
+		{
+			return la + lb;
+		}
 		friend LinkedList operator+ <>(LinkedList, LinkedList);
 
 		friend bool operator== <>(const LinkedList&, const LinkedList&);
@@ -309,44 +334,53 @@ namespace DS
 		pointer _head;
 		size_type _length;
 
-		pointer& _Prev_Node(const pointer node)
+		pointer& _Prev_node(const pointer node)
 		{
 			return (node->prev);
 		}
 
-		pointer& _Next_Node(const pointer node)
+		pointer& _Next_node(const pointer node)
 		{
 			return (node->next);
 		}
 
-		// 建立节点，包括数据以及与其前后驱的联系
-		pointer _Create_Node(const T& data, pointer prev, pointer next)
+		pointer _Create_node(pointer prev, pointer next)
 		{
-			pointer node = pointer();
+			std::allocator<node_type> alloc;
+			pointer node = alloc.allocate(1);
 			if (prev == pointer())
 			{
 				prev = node;
 				next = node;
 			}
-			node = new node_type(data, prev, next);
+			alloc.construct(std::addressof(node->prev), prev);
+			alloc.construct(std::addressof(node->next), next);
+
 			return node;
 		}
 
-		pointer _Create_Node(T&& data, pointer prev, pointer next)
+		// 建立节点，包括数据以及与其前后驱的联系
+		pointer _Create_node(const T& data, pointer prev, pointer next)
 		{
-			pointer node = pointer();
-			if (prev == pointer())
-			{
-				prev = node;
-				next = node;
-			}
-			node = new node_type(std::move(data), prev, next);
+			std::allocator<T> alloc;
+			pointer node = _Create_node(prev, next);
+			alloc.construct(std::addressof(node->data), data);
+			return node;
+		}
+
+		pointer _Create_node(T&& data, pointer prev, pointer next)
+		{
+			std::allocator<T> alloc;
+			pointer node = _Create_node(prev, next);
+			alloc.construct(std::addressof(node->data), std::forward<T>(data));
+			
 			return node;
 		}
 
 		pointer _Create_head()
 		{
-			return _Create_Node(T(), pointer(), pointer());
+			T elem;
+			return _Create_node(elem , pointer(), pointer());
 		}
 
 		// 由begin() - end()区间的数据建立链表
@@ -367,10 +401,10 @@ namespace DS
 
 		pointer _Insert(pointer where, const T& val)
 		{
-			pointer newNode = _Create_Node(val, _Prev_Node(where), _Next_Node(where));
-			_Prev_Node(where)->next = newNode;
+			pointer newNode = _Create_node(val, _Prev_node(where), where);
+			_Prev_node(where)->next = newNode;
 			where->prev = newNode;
-
+			_length++;
 			return newNode;
 		}
 
@@ -380,11 +414,11 @@ namespace DS
 			if (first > last)
 				return (where);
 
-			pointer ptr = _Prev_Node(where);
+			pointer ptr = _Prev_node(where);
 			for (; first != last; first++)
 				_Insert(where, *first);
 
-			return _Next_Node(ptr);
+			return _Next_node(ptr);
 		}
 
 		pointer _Insert_n(pointer where, size_type count, const T& val)
@@ -392,20 +426,19 @@ namespace DS
 			if (count <= 0)
 				return (where);
 
-			_length += count;
-			pointer ptr = _Prev_Node(where);
+			pointer ptr = _Prev_node(where);
 			for (; count > 0; count--)
 				_Insert(where, val);
 
-			return _Next_Node(ptr);
+			return _Next_node(ptr);
 		}
 
 		pointer _Unlinked_node(pointer node)
 		{
-			_Prev_Node(node)->next = _Next_Node(node);
-			_Next_Node(node)->prev = _Prev_Node(node);
+			_Prev_node(node)->next = _Next_node(node);
+			_Next_node(node)->prev = _Prev_node(node);
 
-			return _Next_Node(node);
+			return _Next_node(node);
 		}
 	};
 }

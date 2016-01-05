@@ -79,7 +79,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="LinkedLineraList.hpp" />
+    <ClInclude Include="quene.hpp" />
     <ClInclude Include="SequentialLineraList.hpp" />
+    <ClInclude Include="stack.hpp" />
     <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>

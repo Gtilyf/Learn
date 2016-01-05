@@ -6,6 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <iostream>
 
 namespace DS{
 
@@ -161,8 +162,8 @@ namespace DS{
 		void emplace_back(T&& val)
 		{
 			if (this->_last == this->_end)
-				_Reverse(1);
-			_alloc.construct(this->_last, std::forward(val));
+				_Reserve(1);
+			_alloc.construct(this->_last, std::forward<T>(val));
 			this->_last++;
 		}
 
@@ -213,14 +214,19 @@ namespace DS{
 
 		pointer insert(const pointer where, T&& val)
 		{
-			return (emplace(where, val));
+			return (emplace(where, std::forward<T>(val)));
 		}
 
 		pointer emplace(const pointer where, T&& val)
 		{
-			emplace_back(val);
+			emplace_back(std::forward<T>(val));
 			std::rotate(where, end() - 1, end());
 			return (where);
+		}
+
+		pointer erase(const size_type pos)
+		{
+			return (erase(begin() + pos));
 		}
 
 		// 删除where处的元素
@@ -275,13 +281,16 @@ namespace DS{
 		}
 
 		// 对list进行遍历，对所有的元素执行Pred操作
-		bool Traverse(bool(*Pred) (T&))
+		bool Traverse()
 		{
-			for (int i = 0; i < Size(); i++)
+			pointer ptr = _first;
+			for (; ptr != _last; ptr++)
 			{
-				if (!Pred(*(_base + i)))
-					return false;
+				std::cout << *ptr << "\t";
 			}
+
+			std::cout << endl;
+			
 			return true;
 		}
 
@@ -358,7 +367,7 @@ namespace DS{
 		// @return: copy success, return where + (last - first)
 		pointer _UninitCopy(pointer first, pointer last, pointer dest)
 		{
-			return (std::_Uninitialized_copy(first, last, dest, _Get_WrapAlloc());
+			return (std::_Uninitialized_copy(first, last, dest, _Get_WrapAlloc()));
 		}
 
 		// move [first, last) to [dest, ...) where is uninitialized
@@ -489,11 +498,11 @@ namespace DS{
 				_Reallocate(_Grow_to(count));
 		}
 
-		size_type _Grow_to(sizr_type count)
+		size_type _Grow_to(size_type count)
 		{
-			size_type newSize = _Rise_size(capacity);
+			size_type newSize = _Rise_size(capacity());
 			if (count > newSize - size())
-				newSize = capacity + count;
+				newSize = capacity() + count;
 			return newSize;
 		}
 
