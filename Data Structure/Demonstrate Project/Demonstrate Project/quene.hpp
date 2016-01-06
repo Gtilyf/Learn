@@ -4,12 +4,51 @@
 namespace DS
 {
 	template<typename T, typename ContainerType = LinkedList<T>>
+	class quene;
+
+	template<typename T, typename ContainerType = LinkedList<T>>
+	void swap(quene<T, ContainerType>& q1, quene<T, ContainerType>& q1)
+	{
+		swap(q1._container, q2._container);
+	}
+
+	template<typename T, typename ContainerType = LinkedList<T>>
 	class quene
 	{
-		typedef ContainerType::size_type size_type;
+		
+	public:
+		typedef typename ContainerType::size_type size_type;
 		typedef T& reference;
 		typedef const T& const_reference;
-	public:
+
+		quene()
+			: _container()
+		{}
+
+		explicit quene(const ContainerType& c)
+			: _container(c)
+		{}
+
+		explicit quene(ContainerType&& rc)
+			: _container(std::move(rc))
+		{}
+
+		quene(const quene& q)
+			: _container(q._container)
+		{}
+
+		quene(quene&& rq)
+			: _container(std::move(rq._container))
+		{
+			rq._container = ContainerType();
+		}
+
+		quene operator=(quene q)
+		{
+			swap(*this, q);
+			return *this;
+		}
+
 		void push(const T& val)
 		{
 			_container.push_back(val);
@@ -17,12 +56,12 @@ namespace DS
 
 		void push(T&& rval)
 		{
-			_container.push_back(std::forward(rval));
+			_container.push_back(std::forward<T>(rval));
 		}
 
 		void emplace(T&& rval)
 		{
-			_container.emplace_back(std::forward(rval));
+			_container.emplace_back(std::forward<T>(rval));
 		}
 
 		bool empty() const

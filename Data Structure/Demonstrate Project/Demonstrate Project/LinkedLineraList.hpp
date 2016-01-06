@@ -101,11 +101,13 @@ namespace DS
 	template<typename T>
 	class LinkedList {
 
+		
+
+	public:
 		typedef std::size_t size_type;
 		typedef LinkedNode<T> node_type;
 		typedef LinkedNode<T>* pointer;
 
-	public:
 		// 默认初始化，只含有一个tail节点
 		LinkedList()
 			: _head(_Create_head())
@@ -139,7 +141,7 @@ namespace DS
 		// copy constructor
 		LinkedList(const LinkedList& ll)
 		{
-			_Create_head();
+			_head = _Create_head();
 			pointer first = ll._head->next;
 			for (; first != ll._head; first = first->next)
 				push_back(first->data);
@@ -229,7 +231,7 @@ namespace DS
 		T pop_back()
 		{
 			T rtVal = _Prev_node(end())->data;
-			erase(ptr);
+			erase(_Prev_node(end()));
 			return rtVal;
 		}
 

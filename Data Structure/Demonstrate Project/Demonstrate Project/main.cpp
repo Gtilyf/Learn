@@ -1,5 +1,7 @@
 #include "SequentialLineraList.hpp"
-#include "LinkedLineraList.hpp"
+//#include "LinkedLineraList.hpp"
+#include "stack.hpp"
+#include <string>
 
 using namespace std;
 using namespace DS;
@@ -27,6 +29,13 @@ int main()
 
 	ll.insert(ptr, 2, 9);
 	ll.Traverse();
+
+	stack<int> s(ll);
+
+	cout << s.pop() << endl;
+
+	s.push(12);
+	cout << s.pop() << endl;
 
 	getchar();
 	return 0;

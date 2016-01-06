@@ -56,11 +56,11 @@ namespace DS{
 	template<typename T>
 	class SqList {
 
+	public:
 		typedef std::size_t size_type;
 		typedef T* pointer;
 		typedef T& reference;
 
-	public:
 		SqList()
 		{
 			_Create_Mem(LIST_INIT_SIZE);
