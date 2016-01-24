@@ -2,6 +2,9 @@
 	线性表的链表实现，内存控制采用allocator实现
 */
 
+#ifndef _LinkedLineraList_
+#define _LinkedLineraList_
+
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
@@ -100,8 +103,6 @@ namespace DS
 
 	template<typename T>
 	class LinkedList {
-
-		
 
 	public:
 		typedef std::size_t size_type;
@@ -294,13 +295,12 @@ namespace DS
 		}
 
 		// 对list进行遍历，对所有的元素执行指定操作
-		bool Traverse()
+		template<typename FunType>
+		bool Traverse(FunType pre)
 		{
 			pointer ptr = begin();
 			for (; ptr != end(); ptr = _Next_node(ptr))
-				std::cout << ptr->data << "\t";
-
-			std::cout << endl;
+				pre(ptr->data);
 
 			return true;
 		}
@@ -444,3 +444,4 @@ namespace DS
 		}
 	};
 }
+#endif

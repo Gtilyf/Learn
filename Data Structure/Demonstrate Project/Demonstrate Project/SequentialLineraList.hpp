@@ -2,8 +2,9 @@
 	线性表的顺序实现，内存控制采用allocator实现.
 
 */
+#ifndef _SequentialLineraList_
+#define _SwquentialLineraList_
 
-#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <iostream>
@@ -52,6 +53,113 @@ namespace DS{
 	{
 		return !(sl1 > sl2);
 	}
+
+	template<typename T>
+	class _Vector_Iterator_{
+	public:
+		typedef typename T::reference reference;
+		typedef typename T::pointer pointer;
+		typedef typename T::size_type size_type;
+		typedef std::random_access_iterator_tag iterator_category;
+		typedef typename T::value_type value_type;
+		typedef typename T::difference_type difference_type;
+
+		_Vector_Iterator_(pointer ptr)
+			: _Ptr(ptr)
+		{}
+
+		reference operator*()
+		{
+			return *(this->_Ptr);
+		}
+
+		pointer operator->()
+		{
+			return (std::pointer_traits<pointer>::pointer_to(**this));
+		}
+
+		_Vector_Iterator_& operator++()
+		{
+			++(this->_Ptr);
+			return (*this);
+		}
+
+		_Vector_Iterator_ operator++(int)
+		{
+			_Vector_Iterator_ tmp = *this;
+			++(*this);
+			return tmp;
+		}
+
+		_Vector_Iterator_& operator--()
+		{
+			--(this->_Ptr);
+			return (*this);
+		}
+
+		_Vector_Iterator_ operator--(int)
+		{
+			_Vector_Iterator_ tmp = *this;
+			--(*this);
+			return tmp;
+		}
+
+		_Vector_Iterator_ operator-(size_type n)
+		{
+			this->_Ptr -= n;
+			return *this;
+		}
+
+		_Vector_Iterator_ operator+(size_type n)
+		{
+			this->_Ptr += n;
+			return *this;
+		}
+
+		_Vector_Iterator_ operator+=(size_type n)
+		{
+			this->_Ptr += n;
+			return *this;
+		}
+
+		_Vector_Iterator_ operator-=(size_type n)
+		{
+			this->_Ptr -= n;
+			return *this;
+		}
+
+		bool operator==(const _Vector_Iterator_& right)
+		{
+			return this->_Ptr == right._Ptr;
+		}
+
+		bool operator!=(const _Vector_Iterator_& right)
+		{
+			return !(*this == right);
+		}
+
+		bool operator<(const _Vector_Iterator_& right)
+		{
+			return (this->_Ptr < right._Ptr);
+		}
+
+		bool operator>(const _Vector_Iterator_& right)
+		{
+			return (this->_Ptr > right._Ptr);
+		}
+
+		bool operator<=(const _Vector_Iterator_& right)
+		{
+			return !(*this > right);
+		}
+
+		bool operator>=(const _Vector_Iterator_& right)
+		{
+			return !(*this < right);
+		}
+
+		pointer _Ptr;
+	};
 
 	template<typename T>
 	class SqList {
@@ -197,7 +305,7 @@ namespace DS{
 		}
 
 		template<typename _IteratorType>
-		pointer insert(const pointer where, _IteratorType first, _IteratorType last)
+		pointer insert(const pointer where, pointer first, pointer last)
 		{
 			return (_Insert_Range(where, first, last));
 		}
@@ -235,13 +343,13 @@ namespace DS{
 			std::_Move(where + 1, end(), where);
 			_alloc.destroy(this->_last - 1);
 			this->_last--;
-			return where;
+			return (where);
 		}
 
 		pointer erase(const pointer first, const pointer last)
 		{
 			if (first >= end() || this->_first > first || this->_last < last || first > last)
-				return pointer();
+				return (pointer());
 
 			if (first == begin() && last == end())
 				clear();
@@ -249,7 +357,7 @@ namespace DS{
 			pointer firstArg = first;
 			pointer _Ptr = std::_Move(last, end(), first);
 			std::_Destroy_range(ptr, end(), _Get_WrapAlloc());
-			return firstArg;
+			return (firstArg);
 		}
 
 		reference at(const size_type pos)
@@ -281,15 +389,12 @@ namespace DS{
 		}
 
 		// 对list进行遍历，对所有的元素执行Pred操作
-		bool Traverse()
+		template<typename FunType>
+		bool Traverse(FunType pre)
 		{
 			pointer ptr = _first;
 			for (; ptr != _last; ptr++)
-			{
-				std::cout << *ptr << "\t";
-			}
-
-			std::cout << endl;
+				pre(*ptr);
 			
 			return true;
 		}
@@ -514,3 +619,5 @@ namespace DS{
 	};
 
 }
+
+#endif

@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _quene_
+#define _quene_
+
 #include "LinkedLineraList.hpp"
 
 namespace DS
@@ -93,3 +96,5 @@ namespace DS
 		ContainerType _container;
 	};
 }
+
+#endif

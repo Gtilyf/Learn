@@ -15,5 +15,8 @@ Contains all of the programming learn notes and sample projects;
 - **Data Structure**
 	- [Linear List](./Data Structure/Linear_List.md)
 
+- **Python**
+	- [Basic Syntax](./Python/Basic Synatax.md#Python basic syntax)
+
 - **Unity**
 	- [3D Physics](./Unity/3D Physics.md) : Unity 3D physics system;

@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _statck_
+#define _statck_
+
 #include "LinkedLineraList.hpp"
 
 namespace DS
@@ -94,3 +97,5 @@ namespace DS
 		ContainerType _container;
 	};
 }
+
+#endif
