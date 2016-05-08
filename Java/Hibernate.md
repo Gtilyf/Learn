@@ -1,0 +1,3 @@
+# Hibernate
+
+基于JDBC的ORM持久化框架，利用反射原理，将实体类中的字段按照XML配置或者annotation解析成一条或者多条sql语句，然后放入数据库中执行。

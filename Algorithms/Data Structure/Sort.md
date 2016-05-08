@@ -36,3 +36,4 @@ void QuickSort(List& L, int low, int hight)
 
 #### Heap Sort
 
+堆是一个完全二叉树，其中每个节点都大于（或小于）其所有的孩子节点，常用于优先队列的实现。

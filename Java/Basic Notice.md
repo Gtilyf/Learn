@@ -78,6 +78,18 @@ lambda的合法性检查：
 - 期望使用的接口必须只有一个强制方法;
 - 这个强制方法的签名要完全匹配lambda表达式;
 
+**Lambda值捕获：**
+
+lambda表达式可以捕获外部作用域的变量，但是为了为了保证被捕获的变量值是定义良好的，线程安全的，该捕获变量在lambda表达式中是不可更改的；
+```java
+String text = "hello";
+Thread thread = new Thread(() -> {
+	// ERROR! lambda所捕获的值
+    text = "dfa";
+    System.out.print(text);
+});
+```
+
 **Pre-Built functions library:**
 
 Java 8提供了一些可重用的函数式接口：`java.util.function`
