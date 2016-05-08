@@ -3,9 +3,9 @@
 Contains all of the programming learn notes and sample projects;
 
 **NOTES:**
-- **[Closure:](./Closure.md#closure)** 对于闭包的一些思考与理解；
-- **[HTTP:](./HTTP.md#http)** 对于HTTP的一些思考与理解
-- **[Data Base:]**(./Data Base.md#data-base) 
+- **[Closure](./Closure.md#closure)** ：对于闭包的一些思考与理解；
+- **[HTTP](./HTTP.md#http)** ：对于HTTP的一些思考与理解
+- **[Data Base](./Data Base.md#data-base)** ：
 
 - **C++**
 	- [variable](./C++/Variable.md#variable) : understanding of reference, pointer, const, [lvalue-rvalue](./C++/Variable.md#lvalue--rvalue) and [move instead of copy](./C++/Variable.md#move-instead-of-copy);
