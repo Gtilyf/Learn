@@ -22,7 +22,7 @@ Contains all of the programming learn notes and sample projects;
 
 - **Algorithms:**
   - [DS-Linear List](./Algorithms/Data Structure/Linear_List.md#linear_list) : linear list
-  - [DS-Binary Tree](./Algorithms/Data Structure/BinaryTree.md#binary-tree)
+  - [DS-Binary Tree](./Algorithms/Data Structure/BinaryTree.md#binary-tree) : binary tree
   - [DS-Search](./Algorithms/Data Structure/Search.md#Search)
   - [DS-Sort](./Algorithms/Data Structure/Sort.md#Sort)
 
