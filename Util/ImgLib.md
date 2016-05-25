@@ -18,3 +18,4 @@
 - Splitshire http://splitshire.com/
 - Pixabay http://pixabay.com/
 - 500px https://500px.com
+- [https://www.desktoppr.co/wallpapers](https://www.desktoppr.co/wallpapers)
