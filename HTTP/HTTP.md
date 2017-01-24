@@ -8,7 +8,7 @@ HTTP链接的断开：四次分手，首先主机1发送断开链接请求报文
 
 [参考](http://www.jellythink.com/archives/705)
 
-![HTTP](./Util/img/http.png)
+![HTTP](./img/http.png)
 
 HTTP报文由`起始行(start line)`、`首部(hearder)`、`主体(body)`组成，请求报文如下：
 ```
