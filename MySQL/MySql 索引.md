@@ -4,18 +4,9 @@
 
 #### 建立索引原则
 
-1. 最左前缀匹配原则
-
-
-
-#### explain
-
-![](./explain.png)
-
-[explain详解](http://www.cnblogs.com/xuanzhi201111/p/4175635.html)
-
-[EXPLAIN Output Format](http://dev.mysql.com/doc/refman/5.7/en/explain-output.html)
-
+1. 最左前缀匹配原则，mysql会一直向右匹配直到遇到范围查询(>、<、between、like)就停止匹配，比如a = 1 and b = 2 and c > 3 and d = 4 如果建立(a,b,c,d)顺序的索引，d是用不到索引的，如果建立(a,b,d,c)的索引则都可以用到；
+2. 尽量选择区分度高的列作为索引，区分度的公式是count(distinct col)/count(*)，表示字段不重复的比例，比例越大我们扫描的记录数越少，唯一键的区分度是1；
+3. 尽量的扩展索引，不要新建索引；比如表中已经有a的索引，现在要加(a,b)的索引，那么只需要修改原来的索引即可；
 
 
 #### 索引选择性

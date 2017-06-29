@@ -106,6 +106,8 @@ Collections.sort(people, Person.BY_LAST_AND_AGE);
 
 **Pre-Built functions library:**
 
+> https://docs.oracle.com/javase/8/docs/api/java/util/function/package-summary.html
+
 Java 8提供了一些可重用的函数式接口：`java.util.function`
 
 > - **Predicate**: A property of the object passed as argument

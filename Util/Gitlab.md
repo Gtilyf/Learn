@@ -1,5 +1,6 @@
 # Gitlab
 
+
 Install
 =======
 
@@ -32,7 +33,7 @@ external_url 'http://101.201.81.25'
 ```
 接着执行：gtilab-ctl reconfigure
 
-访问该url，如果出现502错误，一般是unicorn服务为成功启动，其默认端口号为8080，有可能与其他服务端口号冲突，可在配置文件中进行修改(使用gitlab-ctl tail unicorn跟踪unicorn服务的状态)：
+访问该url，如果出现502错误，一般是unicorn服务未成功启动，其默认端口号为8080，有可能与其他服务端口号冲突，可在配置文件中进行修改(使用gitlab-ctl tail unicorn跟踪unicorn服务的状态)：
 ```
 ## Advanced settings
 # unicorn['listen'] = '127.0.0.1'
@@ -58,6 +59,7 @@ gitlab_rails['gravatar_plain_url'] = 'http://cn.gravatar.com/avatar/%{hash}?s=%{
 gitlab-ctl reconfigure
 gitlab-rake cache:clear RAILS_ENV=production
 ```
+
 
 使用
 ====
