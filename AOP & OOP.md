@@ -1,7 +1,5 @@
 #AOP & OOP
 
-test
-
 > [重学Spring之面向切面](https://mp.weixin.qq.com/s?__biz=MzA4NTE1MDk5MA==&mid=2672797679&idx=1&sn=4c44e1a27b37cd30505f1f1eec88f51a&chksm=85675b8eb210d298295ed6a51fe16a632d83d732413564e88e508c66a1cebe77e89a6c0cb9fe#rd)
 
 面向对象侧重静态，名词，状态，组织，数据，载体是空间。
