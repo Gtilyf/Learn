@@ -34,7 +34,7 @@ protected Class<?> findClass(final String name)
                         Resource res = ucp.getResource(path, false);
                         if (res != null) {
                             try {
-                              	// defineClass决定class二进制文件的处理方式
+                                  // defineClass决定class二进制文件的处理方式
                                 return defineClass(name, res);
                             } catch (IOException e) {
                                 throw new ClassNotFoundException(name, e);
@@ -93,7 +93,7 @@ protected Class<?> loadClass(String name, boolean resolve)
                 long t0 = System.nanoTime();
                 try {
                     if (parent != null) {
-                      	// 如果存在父类加载器，则优先委派给父类加载器加载
+                          // 如果存在父类加载器，则优先委派给父类加载器加载
                         c = parent.loadClass(name, false);
                     } else {
                         //如果不存在父类加载器，就检查是否是由启动类加载器加载的类，通过调用本地方法native Class findBootstrapClass(String name)

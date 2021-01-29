@@ -80,7 +80,7 @@ http://www.programcreek.com/
 
 Program Creek是一个覆盖了大量文章、文本教程、代码示例和图表的Java编程类博客，网站的文章包括了Java基础知识、Java XML解析、Java多线程、面向对象概念、Java 8λ、Java API 示例和Java框架等主题。Program Creek还包含了大量的插图和图表来简化复杂的Java主题，比如空语句、监视器、JVM运行时数据分区等。
 
-#### 11. **占小狼** 
+#### 11. **占小狼**
 
 http://www.jianshu.com/u/90ab66c248e6
 

@@ -10,8 +10,6 @@ NIO（非阻塞IO）是一种IO编程模型，Golang中的IO底层实现方式�
 
 golang的goroutine让你比java更容易编写并发程序，但性能不会有差别（目前来说，golang性能还不能和java比，看过代码就知道了，GC弱到爆），代码不会减少，该写的逻辑还得写。ps，其实golang的(sched)go程切换代码虽然原理和java的fork-join框架一样，但是fork-join比golang的sched代码牛逼不少，开始膜拜Doug Lea吧，golang还有很长的路要走。
 
-
-
 我们分别来看看java和golang实现并发任务的机制，java里面是Thread，golang里面是goroutine。比如你想创建一个发邮件任务，一个接受消息任务，对应的就是java创建2个独立线程，golang创建2个独立的goroutine。
 
 java和golang的程序最终都是在操作系统上执行的，以linux操作系统为例，操作系统有自己的多线程机制，调用 [clone(2) - Linux manual page**](https://link.zhihu.com/?target=http%3A//man7.org/linux/man-pages/man2/clone.2.html) clone函数就可以创建一个线程。
@@ -27,6 +25,3 @@ java线程和操作系统是一对一的关系，也就是说当你创建一个j
 那有人就说，如果一种机制可以让语言的线程和系统的线程多对一，这样可以一个任务对应一个语言线程，而很少几个系统线程来处理这几个语言线程，该多好啊。哈哈，大牛们早就想到啦，所以提出了协程(routine)的概念（也叫超线程，就是线程上的线程），采用的切换算法就是work-steel算法。
 
 说道这里，你应该明白了吧，goroutine就是我们说的协程（routine），他能让你采用很简单的编程模型编写能处理高并发的程序，这就是goroutine的好处。
-
-
-

@@ -1,6 +1,6 @@
 # MySQL Explain
 
->https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#explain-extra-information
+> https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#explain-extra-information
 
 ![](./explain.png)
 

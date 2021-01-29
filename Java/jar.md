@@ -9,53 +9,53 @@ https://docs.oracle.com/javase/tutorial/deployment/jar/build.html
 Java归档文件格式(Java Archive, JAR)能够将多个源码、资源等文件打包到一个归档文件中，jar是通过zip格式进行打包的。说白了就是一个压缩包，里面包含相关的class文件、resources文件，以及包含jar包信息的manifest文件；如果是可以直接执行的jar包，则manifest文件中必须包含Main-Class参数；jar包class只是供其他应用使用(import)，则涉及到[类加载](./class load.md)相关内容。
 
 > Options:
->
+> 
 > ​    -c  create new archive
->
+> 
 > ​    -t  list table of contents for archive
->
+> 
 > ​    -x  extract named (or all) files from archive
->
+> 
 > ​    -u  update existing archive
->
+> 
 > ​    -v  generate verbose output on standard output
->
+> 
 > ​    -f  specify archive file name
->
+> 
 > ​    -m  include manifest information from specified manifest file
->
+> 
 > ​    -n  perform Pack200 normalization after creating a new archive
->
+> 
 > ​    -e  specify application entry point for stand-alone application bundled into an executable jar file
->
-> ​	(为捆绑到可执行 jar 文件的独立应用程序指定应用程序入口点)
->
+> 
+> ​    (为捆绑到可执行 jar 文件的独立应用程序指定应用程序入口点)
+> 
 > ​    -0  store only; use no ZIP compression
->
+> 
 > ​    -P  preserve leading '/' (absolute path) and ".." (parent directory) components from file names
->
-> ​	(保留文件名中的前导 '/' (绝对路径) 和 ".." (父目录) 组件)
->
+> 
+> ​    (保留文件名中的前导 '/' (绝对路径) 和 ".." (父目录) 组件)
+> 
 > ​    -M  do not create a manifest file for the entries
->
+> 
 > ​    -i  generate index information for the specified jar files
->
+> 
 > ​    -C  change to the specified directory and include the following file
->
-> ​	（更改为指定的目录并包含其中的文件(可以理解为首先cd到指定目录)）
->
+> 
+> ​    （更改为指定的目录并包含其中的文件(可以理解为首先cd到指定目录)）
+> 
 > If any file is a directory then it is processed recursively.
->
+> 
 > The manifest file name, the archive file name and the entry point name are
->
+> 
 > specified in the same order as the 'm', 'f' and 'e' flags.
->
+> 
 > Example 1: to archive two class files into an archive called classes.jar: 
->
+> 
 > ​       `jar cvf classes.jar Foo.class Bar.class `
->
+> 
 > Example 2: use an existing manifest file 'mymanifest' and archive all the files in the foo/ directory into 'classes.jar': 
->
+> 
 > ​      ` jar cvfm classes.jar mymanifest -C foo/ .`
 
 **生成jar包，会同时添加manifest文件**
@@ -103,6 +103,7 @@ HelloJar.class
      0 Mon Apr 24 22:59:00 CST 2017 META-INF/
     68 Mon Apr 24 22:59:00 CST 2017 META-INF/MANIFEST.MF
     443 Mon Apr 24 22:51:48 CST 2017 HelloJar.class
+
 **解压jar包（特定的文件或者整个jar包）**
 
 ```
@@ -147,7 +148,7 @@ yahoo2.au
 **MANIFEST.MF**
 
 > When you create a JAR file, it automatically receives a default manifest file. There can be only one manifest file in an archive, and it always has the pathname
->
+> 
 > ```
 > META-INF/MANIFEST.MF
 > ```

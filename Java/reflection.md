@@ -2,8 +2,6 @@
 
 Java反射机制可以让我们在编译期(Compile Time)之外的运行期(Runtime)检查类，接口，变量以及方法的信息。反射还可以让我们在运行期实例化对象，调用方法。
 
-
-
 #### method.invoke
 
 通过添加`-XX:+TraceClassLoading` JVM参数，我们可以看到method.invoke的调用过程中class load情况：
@@ -109,9 +107,9 @@ private MethodAccessor acquireMethodAccessor() {
 `method.invoke`的真正调用是委托给了MethodAccessor，其中methodAccessor是通过reflectionFactory创建的，在研究reflectionFactory是怎么创建methodAccessor之前，`acquireMethodAccessor`方法的两个比较有意思的点也是值得研究一下的：
 
 - **Method.root：**
-
+  
   要理解root的作用，首先来看一个Method中很有意思的函数：
-
+  
   ```java
   /**
    * Package-private routine (exposed to java.lang.Class via
@@ -128,7 +126,7 @@ private MethodAccessor acquireMethodAccessor() {
     // objects.)
     if (this.root != null)
       throw new IllegalArgumentException("Can not copy a non-root Method");
-    
+  
     Method res = new Method(clazz, name, parameterTypes, returnType,
                             exceptionTypes, modifiers, slot, signature,
                             annotations, parameterAnnotations, annotationDefault);
@@ -138,9 +136,9 @@ private MethodAccessor acquireMethodAccessor() {
     return res;
   }
   ```
-
+  
   copy函数的作用就是共享在虚拟机中最底层的method的MethodAccessor，我们通过`Class.getMethods`等方法得到的method，都是最底层method复制出来的：
-
+  
   ```java
   // Class.java
   @CallerSensitive
@@ -157,7 +155,7 @@ private MethodAccessor acquireMethodAccessor() {
     }
     return out;
   }
-
+  
   // ReflectAccess.java
   //
   // Copying routines, needed to quickly fabricate new Field,
@@ -167,18 +165,18 @@ private MethodAccessor acquireMethodAccessor() {
     return arg.copy();
   }
   ```
-
+  
   那么通过这个机制我们大概可以理解这样一个概念：每个Java方法只有一个对应的Method对象（root），这个对象在每次通过反射获取Method的时候，通过新创建Method对象，将root包装起来返回给用户。
-
+  
   **_为啥要这样做呢？？？To be continue…_**
 
 - **no synchronization use:**
-
+  
   `acquireMethodAccessor`方法是非线程安全的，意思就是说有可能会创建多个methodAccessor，给出的解释是：`avoiding synchronization will probably make the implementation more scalable`，可扩展性；
-
+  
   **_为啥呢？？？To be continue…_**
-
-  ​
+  
+  
 
 **reflectionFactory.newMethodAccessor:**
 
@@ -243,14 +241,14 @@ class NativeMethodAccessorImpl extends MethodAccessorImpl {
       // 修改delegate accessor的delegate，实现更换调用方式
       this.parent.setDelegate(var3);
     }
-    
+
     return invoke0(this.method, var1, var2);
   }
-  
+
   void setParent(DelegatingMethodAccessorImpl var1) {
     this.parent = var1;
   }
-  
+
   // JNI调用
   private static native Object invoke0(Method var0, Object var1, Object[] var2);
 }
@@ -299,12 +297,12 @@ public class A {
 
 ```java
 package sun.reflect;  
-  
+
 public class GeneratedMethodAccessor1 extends MethodAccessorImpl {      
     public GeneratedMethodAccessor1() {  
         super();  
     }  
-      
+
     public Object invoke(Object obj, Object[] args)     
         throws IllegalArgumentException, InvocationTargetException {  
         // prepare the target and parameters  
@@ -330,8 +328,6 @@ public class GeneratedMethodAccessor1 extends MethodAccessorImpl {
 
 至此，`method.invoke`的调用过程就已经梳理完整了；
 
-
-
 **参考资料：**
 
 [关于反射调用方法的一个log](http://rednaxelafx.iteye.com/blog/548536)
@@ -346,4 +342,3 @@ public class GeneratedMethodAccessor1 extends MethodAccessorImpl {
 
 [Potential native memory use in reflection delegating classloaders](http://www-01.ibm.com/support/docview.wss?uid=swg21566549)
 
-[JAVA反射原理](http://www.bijishequ.com/detail/407157?p=71-79)

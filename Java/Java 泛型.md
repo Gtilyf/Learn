@@ -87,9 +87,14 @@ class B extends A {
     String get(String s) {  
         return "";  
     }  
-  	Object get(Object t) {
+      Object get(Object t) {
         return (Object) get((String) s);
     } 
 }  
 ```
 
+#### PECS原则
+
+> http://www.cnblogs.com/softidea/p/4106659.html
+> 
+> http://blog.csdn.net/xx326664162/article/details/52175283

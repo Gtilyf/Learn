@@ -2,12 +2,13 @@
 
 **目录**：
 
-- **Pass-by-Value：**Java参数的传递方式，引用？值？
+- **Pass-by-Value：** Java参数的传递方式，引用？值？
 
+- **Polymorphism:**  有关Java多态的实现机制，动态绑定
 
-- **Polymorphism:** 有关Java多态的实现机制，动态绑定
-- **enumerated:** Java枚举类型特性
-- **Wrapper Class & Static Import:** 包装类以及静态导入
+- **enumerated:**  Java枚举类型特性
+
+- **Wrapper Class & Static Import:**  包装类以及静态导入
 
 ***
 
@@ -47,8 +48,6 @@ void foo(StringBuilder builder) {
 }
 foo(sb); // sb并不会被改变
 ```
-
-
 
 #### Polymorphism
 
@@ -126,8 +125,6 @@ public class Main {
 */
 ```
 
-
-
 **动态分派**
 
 动态分派与重写(Override)有着很密切的关联。
@@ -141,45 +138,50 @@ public class Main {
 #### enumerated
 
 Java的枚举是特殊的类，既然是类，则其可以定义自己的成员，为这些枚举指定属性，枚举实例由Java运行时创建，在外部不能实例化，所以添加了成员的枚举的构造函数为私有，同时enum类不应提供set函数;
+
 ```java
 public enum RegularPolygon{
-	// 有参数的枚举最后必须使用分号结束
-	TRIANGLE(3), SQUARE(4), PENTAGON(5), HEXAGON(6);
+    // 有参数的枚举最后必须使用分号结束
+    TRIANGLE(3), SQUARE(4), PENTAGON(5), HEXAGON(6);
 
-	private Shape shape;
+    private Shape shape;
 
-	private RegularPolygon(int sides){
-		switch(sides){
-			case 3:
-				shape = new Triangle(1, 1, 1, 60, 60);
-				break;
-			case 4:
-			...
-		}
-	}
+    private RegularPolygon(int sides){
+        switch(sides){
+            case 3:
+                shape = new Triangle(1, 1, 1, 60, 60);
+                break;
+            case 4:
+            ...
+        }
+    }
 }
 ```
 
 #### Wrapper Class & import static
 
 在需要将基本数据类型当作对象进行处理时使用，主要使用在集合以及本类型与其他类型的转换上。
+
 ```java
 List<Integer> intList = new ArrayList<>();
 Integer i = 3;
 short shValue = i.shortValue();
 int strToint = Integer.getInteger("3");
 ```
+
 使用关键字import static导入类型中的静态成员，也可以导入枚举类型;
+
 ```java
 import static java.lang.System.out;
 import static climate.temperate.Season.*
 
 public static void main(String... args)
 {
-	out.println("hello world");
-	Seasons s = WINTER;
+    out.println("hello world");
+    Seasons s = WINTER;
 }
 ```
+
 ```java
 package climate.temperate;
 

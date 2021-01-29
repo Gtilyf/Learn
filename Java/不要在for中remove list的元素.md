@@ -15,7 +15,7 @@ for (int i : ids) {
 // 当n = 8(倒数第二个元素)的时候，会抛出异常，也会得不到预期的结果
 ids.forEach(i -> {
   if (i == n)
-  	ids.remove(i)
+      ids.remove(i)
   // ...do any thing for i
     System.out.print(i + " ");
 });
@@ -164,6 +164,3 @@ public void remove() {
   }
 }
 ```
-
-
-

@@ -3,7 +3,7 @@
 #### Lambda & Anonymous Class
 
 > [Java 8 functional interfaces](https://www.oreilly.com/learning/java-8-functional-interfaces)
->
+> 
 > [lambda-expressions-in-java-8](http://www.drdobbs.com/jvm/lambda-expressions-in-java-8/240166764?pgno=3)
 
 要理解Lambda表达式，首先需要了解函数式接口。所谓函数式接口即是至包含一个抽象方法的接口(an interface with a single abstract method)，像`Runable`、`Callable`、`Comparator`、`ActionListener`等，在没有lambda语法的时候我们可是使用匿名类进行实现;
@@ -43,9 +43,7 @@ lambda表达式可以捕获外部作用域的变量，但是为了为了保证�
 
 > It's an implementation detail how that is done. For example, one can translate a lambda expression into an object with a single method, so that the values of the free variables are copied into instance variables of that object.
 
-
-
->A lambda expression can access final local variables or local-non-final-initialized-only-once variables.
+> A lambda expression can access final local variables or local-non-final-initialized-only-once variables.
 
 ```java
 String text = "hello";
@@ -55,7 +53,7 @@ Thread thread = new Thread(() -> {
   text = "dfa";
   sb = new StringBuild();
   System.out.print(text);
-  
+
   // CORRECT
   sb.append("hello");
 });
@@ -72,14 +70,14 @@ class Hello {
       system.out.println(Hello.this);
       // this -> 该匿名内部类
       system.out.println(this);
-	}
+    }
   }
 }
 
 class Hello {
   public Runnable r = () -> {
     // this -> Hello
-  	system.out.println(this);
+      system.out.println(this);
   }
 }
 ```
@@ -120,20 +118,20 @@ Java 8提供了一些可重用的函数式接口：`java.util.function`
 ```java
 @FunctionalInterface
 public interface Predicate<T> {
-	// Evaluates this predicate on the given argument.
-	boolean test(T t);
+    // Evaluates this predicate on the given argument.
+    boolean test(T t);
 }
 
 @FunctionalInterface
 public interface Function<T, R> {
-	// Applies this function to the given argument.
-	R apply(T t);
+    // Applies this function to the given argument.
+    R apply(T t);
 }
 
 @FunctionalInterface
 public interface Consumer<T> {
-	// Performs this operation on the given argument.
-	void accept(T t);
+    // Performs this operation on the given argument.
+    void accept(T t);
 }
 
 @FunctionalInterface
@@ -146,19 +144,18 @@ public interface Supplier<T> {
 
 ```java
 class Clazz{
-	private int index;
-	public Clazz(int i, Predicate<Integer> p){
-		if (p.test(i))
-			index = i;
-		else
-			index = 0;
-	}
+    private int index;
+    public Clazz(int i, Predicate<Integer> p){
+        if (p.test(i))
+            index = i;
+        else
+            index = 0;
+    }
 
-	public static void main(String... arfs){
-		Clazz c = new Clazz(8, (i) -> {
-			return i > 5;
-		});
-	}
+    public static void main(String... arfs){
+        Clazz c = new Clazz(8, (i) -> {
+            return i > 5;
+        });
+    }
 }
 ```
-
