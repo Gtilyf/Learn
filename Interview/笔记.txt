@@ -1,0 +1,394 @@
+【java基础】
+1.序列化：
+
+[jdk序列化]
+serialVersionUid不同会报incompatible
+不显示指定serialVersionUid，编译器会自动生成一个，一旦类变化便无法反序列化
+static变量不序列化
+父类变量不序列化
+transient变量不序列化
+重复对象序列化，为节省空间第2次之保存前一个对象的引用
+rmi为纯序列化框架
+成员变量需要加密可以自定义writeObject()和readObject()
+除serialiable接口外有Externalizable，必须显示指定要序列化的成员变量
+
+[其它序列化方式]
+protobuf,json,xml
+json又分为fastjson,gson,jackson
+
+2.jvm
+程序计数器为线程私有，实现分支、循环、跳转、异常处理和线程恢复等功能，此区域没有outofmemoryerror
+虚拟机栈为线程私有，每个方法被执行时会创建栈帧存储局部变量表、操作栈、方法出口等信息
+局部变量表存放编译期可知的基本类型，对象引用，long和double占2个局部变量空间slot，其余都是1个
+java堆存放所有对象实例和数组，可能分配线程私有的缓冲区tlab
+方法区在hotspot也叫做永久代，存放类信息、常量、静态变量等
+运行常量池时方法区的一部分，用于存放编译期生成的各种字面量和符号引用
+直接内存使用场景nio，受总内存和处理器寻址空间限制
+方法体中Object obj=new Object()的内存分配
+reference的访问方式：使用句柄和直接指针
+句柄方式：java堆存放句柄池（对象实例指针+对象类型指针），优点是对象移动时只用改变实例指针
+直接指针：java堆对象存储对象雷响类型指针，优点是少了一次指针定位所以访问速度快，为hotspot使用方式
+性能监控工具：jps,jstack,jmap,jhat,jstat
+静态常量池、运行时常量池，字符串常量池（jdk8移到堆中，保存字符串对象的引用）
+
+3.gc
+serial收集器：单线程
+parNew收集器：serial的多线程版，唯一能和cms收集器配合的新生代收集器
+parallel scavenge收集器：已吞吐量为目标，适合后台运算不需要太多交互的的任务，自适应调整策略（动态调节新生代大小，eden:survisor比例，晋升老年代阀值）
+serial old收集器：serial收集器老年代版，标记-整理算法
+parallel old收集器：parallel scavenge收集器老年代版，标记-整理算法，吞吐量优先
+concurrent mark sweep收集器：已最短回收停顿为目标，重视服务响应速度，标记-清除算法（初始标记，并发标记，重新标记，并发清除；初始标记和重新标记需要stop the world），并发手机，低停顿，对cpu资源敏感，无法处理浮动垃圾，发生“conrurrent mode failure”时启用serial old收集器
+g1收集器：充分利用多cpu优势缩短stop the world时间，通过并发方式不需要停顿线程进行gc，分代收集不需要配合其它收集器，region，整体看时“标记-整理”，局部是复制算法。可预测停顿（有限回收价值最大的region；初始标记，并发标记，最终标记，筛选回收）
+
+4.内存区域
+堆：存放对象实例（jdk7后字符串常量池移到堆中，jdk8后运行时常量池、静态变量移到堆中，取消永久代，新增元类空间位于直接内存）
+栈：栈帧（存放局部变量表，操作数栈，动态连接，方法返回地址），线程私有
+本地方法栈：与栈类似，知识native方法使用
+pc：程序计数器，线程私有
+
+5.字符串
+什么时候会在常量池存储字符串：显示调用intern方法；直接声明字符串字面量；字符串常量相加，任何字符串字面量与string对象相加，不会生成字符串常量
+
+6.启动参数
+-：标准参数，所有jvm必须实现
+-X：非标准参数，默认jvm实现
+-XX：非稳定参数，jvm实现不同，可能会取消，慎用
+
+7.运维
+outofmemoryerror排查：jvm设置HeapDumpOnOutOfMemoryError参数，保存dump文件，然后通过jhat查看所有类的实例数量
+负载高如何排查：top查看cpu占用高进程，top -H -p pid查看cpu占用高线程，获取线程id，然后jstack -l pid查看线程堆栈，根据线程id所有，jstat查看gc情况，jmap查看堆内存情况
+
+8.shell
+top(系统情况：平均负载，任务情况，cpu情况，内存使用情况，swap情况，进程情况：pid,virt,res,%cpu,%mem,time+)
+top -H查看线程情况
+h帮助，空格手动刷新，c显示进程启动全路径程序名，P按CPU排序，M按内存排序
+
+9.jit
+java -> java编译器 -> class -> classloader -> (java解释器，即时编译器)->运行期系统
+热点代码编译成机器码提高效率
+即时编译器（client compiler，server compiler，mixed mode，interpreted mode，compiled mode）
+热点代码：多次调用方法，多次执行循环体
+热点探测：基于采样，基于计数器（方法调用计数器，回边计数器，热度衰减）
+client模式：三段式编译器，关注局部优化
+字节码->方法内联，常量传播->HIR->空值检查消除、范围检查消除->LIR->寄存器分配，窥孔优化、机器码生成
+方法内联：尽量用final、private、static修饰方法避免额外的继承检查
+激进优化手段：空值检测
+
+10.java编译
+c、c++：静态编译，java动态编译
+aot了解
+
+11.jdk11
+no-op gc收集器：处理分配但不错内存回收，用于性能测试
+移除javaee和cobra模块
+httpclient
+隐性类型推导
+flight recorder
+heap profiling
+zgc垃圾收集器（实验性）
+
+12.jdk10
+局部变量推断（var）
+基于jit编译器graal（实验性）
+
+13.jdk9
+模块化
+jshell
+多版本兼容jar
+processhandle
+发布订阅框架
+用少量元素创建集合和映射更容易
+私有接口方法
+try-with-resources,closeable不用写在try里面
+g1收集器作为默认
+
+15.线程，线程池源码阅读
+thread vs runnable，start vs run，runnable vs callable
+线程状态切换（new、runnable、termination、blocked、waiting、time_waiting）
+wait/notify/notifyall，await/signal/signalall
+sleep、wait、join、yield
+park vs unpark
+守护线程
+interrupted vs isInterrupted
+threadlocal
+futuretask
+
+16.volatile
+缓存一致性：在总线上嗅探数据是否过期，过期后重新从内存获取
+可见性：修改后立即同步到内存，使用前都从内存刷新
+有序性：禁止指令重排（内存屏障）
+happens before
+
+17.cas
+cas：配合volatile使用，compxchg，总线锁和缓存锁定（缓存一致性）
+aba：给变量追加版本号
+只能保证单个共享变量的原子操作（合并变量,atomicReference）
+
+18.锁，aqs源码阅读，及lock实现练习
+自旋锁，乐观锁，悲观锁
+synchronized：轻量级锁，重量级锁，偏向锁
+AQS
+synchronized vs reentrantlock：设置等待时间，获取锁信息。底层机制不同
+readwritelock
+cyclicBarrier vs countdownlatch
+semaphore
+写一个死锁,死锁检测
+linkedblockingqueue，arrayblockingqueue
+
+19.hashmap,concurrenthashmap源码阅读（暂时看了jdk7,jdk8了解改动）
+
+20.hash
+算法：直接定址（k+c），除留余数（k/c, c < k），分段叠加，伪随机数
+hash冲突：开放地址法（重新hash找地址），链地址法，再哈希法（更换hash函数），建立公共溢出区
+hashmap，concurrenthashmap：高位和低位扰动算法
+
+21.其它基础知识累积
+重写equals()必须重写hashcode()
+
+【shell】
+
+1.vim
+h,j,k,l
+gg,GG
+$,0
++,-
+ctrl+f,crtl+b
+u,ctrl+r
+x,nx,dd,ndd
+
+2.shell
+type,echo,unset,declare,read,alias,unalias,history
+/etc/profile,~/.bash_profile
+>,>>,2>,2>>,<,<<,&&,||
+pipe,cut,sort,wc,uniq,xargs,-
+
+3.grep
+grep -n [-A] [-B]
+grep -vn
+
+4.正则表达式
+^word:行首
+word$:行尾
+.:任意1个字符
+\:转义字符
+*：0-无穷多个前1个字符
+[list],[^list],[n1-n2]:范围
+\{n,m\}:连续n-m个前一个字符
+
+5.sed:sed [-nefi] [n1][,n2] function(a,i; c,s; d;p)
+
+6.awk:awk 'BEGIN {FS=":"} NR==1{print $1,$2,$3} NR>=2{total=$2+$3;print $1,$2,$3,total}'
+
+7.printf:printf '%s' $(cat file)
+
+8.练习
+统计文件中ip次数top k：cat testfile | awk '{print $2}' | sort | uniq -c | sort -r | head -3
+
+9.script
+test
+$0,$#,$@,$*
+if-then-fi,case-esca,while-do-done,until-do-done,for-do-done
+
+【数据库】
+1.基础/事务/sql优化
+DDL,DML,DCL
+explain(type:all > index > range > ref > const > system,extra:using index、using filesort、using temporary)
+读未提交，读提交，重复读，序列化
+脏读，幻读，不可重复读
+事务隔离级别
+几大范式
+分库和分表设计
+分库于分表带来的分布式困境和对策：热点、废弃数据，迁移扩容、表关联、分页排序、分布式事务、全局唯一ID
+SQL优化(null,!=、<>，or,in、not in，where子句使用参数、表达式、函数，复合索引)
+其它SQL优化（exists代替in，重复数据多的索引无效，varchar代替char，不要select *,count(*) != count(column)）
+(order by, group by order by null)
+（insert批量操作，truncate代替delete from， insert ... select * from, select * into newTable from mytable）
+
+2.索引概念
+索引类型：普通索引，唯一索引，主键索引，复合索引，全文索引
+全文索引：fulltext，match against，倒序索引
+全文索引模式：自然语言模式，布尔模式，扩展模式
+索引结构：b树索引，b+树索引，哈希索引，全文索引
+哈希索引：memory存储引擎方支持
+全文索引：innodb和myisam都支持，应用场景：like '%word%'
+innodb使用页作为数据读取单位（默认16k）
+
+3.磁盘知识
+概念：盘面，磁头，磁道，柱面，扇区，磁盘块，page
+电路知识：盘面凹凸不平，凸起被磁化代表1，凹下没有磁化代表0
+读写顺序：第1磁头扇区 -> 下个磁头 -> 柱面 -> 下一个柱面
+寻道：磁头移动到指定磁道
+预读和局部性原理
+
+4.索引原理
+b树 vs 二叉树：降低树高度，减少磁盘io
+b+树 vs b树：io次数更少，查询性能稳定，范围查询更简便
+节点大小设计成page大小（默认4k），利用预读和局部性原理减少外存读取
+innodb vs myisam（innodb:事务安全，支持行锁，适用update和insert比较多的场景，myisam：非事务安全标记锁，适用于select多情景）
+聚集索引 vs 非聚集索引
+innodb必须要要主键没有的话系统回生成一个隐含字段作为主键
+auto_increment的好处：减少树的调整，紧凑索引将页顺序填满
+
+5.innodb
+事务安全，支持行锁，适用update和insert比较多的场景
+数据文件即索引文件
+辅助索引data记录主键的值，所以辅助索引为二次索引
+
+6.myisam
+非事务安全表级锁，适用于select多情景
+索引文件与数据文件分离
+主索引和辅助索引的data域，都存的数据的地址
+
+7.实际问题讨论
+limit 20000加载很慢如何解决：记录上一次最大ID
+
+8.锁
+show status like 'table%'
+Table_locks_waited高说明存在严重的表级锁争用
+表共享读锁，表独占写锁
+show status like 'innodb_row_lock%'分析行锁竞争情况
+show innodb status
+drop table innodb_monitor
+共享锁，排他锁，意向共享锁，意向排他锁
+select lock in share mode
+select for update
+innodb的行锁通过索引加锁，非索引检索使用表锁
+间隙锁
+insert select，create table select：不确定SQL，解决办法：select into outfile, load data infile
+锁和多版本数据innodb实现一致性读和隔离级别的手段
+锁等待超时阀值
+避免死锁方式：固定顺序访问表，批量时数据排序
+
+【redis】
+1.常规
+持久化，支持多种类型：list、set，支持备份
+原子性操作（多操作multi exec），发布订阅，key过期
+redis-cli -h ip -p port -a password
+redis.conf
+CONFIG GET *
+hmset+hget,lpush+lrange,sadd+smembers,zadd+zrangebyscore
+exists key,expire key seconds,
+subscribe+publish
+事务非原子性，类似批量执行脚本（multi，exec，discard，watch）
+支持lua脚本（eval）
+info(服务器统计信息)
+save+dump.rdb+config get dir
+requirepass+auth password
+redis-benchmark
+maxclients+client list
+数据淘汰策略（lru，maxmemory）
+rdb快照：指定时间间隔将数据集快照写入磁盘，方便备份，但可能丢失几分钟的数据
+aof：将每一条写命名追加到文件，不影响redis性能
+选型：完美两者配合使用，能成熟几分钟丢失使用rdb，其它aof
+分布式锁：setnx
+缓存雪崩和穿透
+
+2.集群
+redis-trib
+create-cluster start/create:6个节点，3主3从
+reshard重新分片
+cluster nodes查看主从和slot分配情况
+redis-cli debug segfault
+redis-trib add-node [--slave]
+redis-trib del-node
+cluster repicate（从节点迁移）
+一致性hash：sortedMap.tailMap
+
+[rpc]
+
+1.dubbo
+使用：集群容错，负载均衡，只订阅只注册，直连，多注册中心，分组，多版本，分组聚合，注解参数验证，结果缓存，泛化使用和实现，回声测试，上下文rpcContext，隐式参数attachment，异步调用future，参数回调callbacklistener，事件通知oninvoke、onreturn、onthrow，本地伪装mock，延迟暴露delay，并发控制executes、actives，loadbalance=leastactive，连接控制accepts、connections，延迟连接lazy，粘连连接sticky，令牌验证token，路由规则，配置规则，服务降级，优雅停机，日志适配dubbo.application.logger，访问日志accesslog，线程栈dump，netty
+集群容错：failover,failfast,failsafe,failback
+负载均衡：随机，轮循，最少活跃调用数，一致性hash
+缓存：lru，threadLocal，jcache
+默认使用mina和hession
+
+2.webservice
+提供端：endpoint.publish(address,impl)
+消费端：wsimport url
+
+3.hession
+HessianServiceExporter - service，interface
+HessianProxyFactoryBean - url，serviceinterface
+
+[kafka]
+at most once, at least once, exactly once
+查看broker的消费组：kafka-consumer-groups --list
+查看消息组堆积情况：kafka-consumer-groups --describe [消费组]
+jar:kafka-clients
+producer: future send(record, callback)
+consumer: records poll(long), enable.auto.commit, assign(partitions)
+
+【hystrix】
+隔离、降级、熔断、缓存
+hystrixCommand
+getfallback降级
+commonGroupKey做隔离
+getCachedKey
+
+【elasticsearch】
+
+node client, transport client
+9300,9200
+restful api
+indices -> types -> documents -> fields
+_source,_search,dsl,过滤器，全文搜索（相关性），高亮
+聚合
+集群，节点，主节点
+集群健康：green，yellow，red
+主分片，复制分片
+故障转移，横向扩展，应对故障
+文档元数据（_index，_type，_id）
+_create
+乐观并发控制
+文档不可变，更新文档 vs 文档局部更新
+_update，groovy脚本
+_mget，批量（action : {metadata}，\n）
+bulk大小：5-15M
+路由：shard = hash(routing) % size
+replication,consistency(one,all,quorum,过半)，timeout
+分布式增删改查
+映射、分析、dsl
+hits、total、_score（相关性得分），took，shards，timeout
+多索引多类型
+分页（size，from）
+query string，dsl
+确切值 vs 全文文本
+倒排索引（标记化，标准化）
+分析器（字符过滤器，分词器，标记过滤）
+标准分析器、简单分析器、空格分析器、语言分析器
+_analyze?analyzer=standard&text=Text to analyze
+_mapping，type，index，analyzer
+多值字段、空字段、内部对象、数组、扁平化
+term，range，exists，missing，boolean，match
+query?explain,_explain
+分布式搜索：查询、取回，协调节点
+深分页（爬虫）
+preference，结果震荡，timeout，routing
+_search?search_type=scan&scroll=1m
+倒排索引的不变性
+动态索引：使用多个索引（不是重写整个倒排索引，而是增加额外的索引反映最近的变化）
+段（拥有完整功能的倒排索引），commit point（包含所有段文件），
+加入索引缓存 -> 缓存提交 -> 新增段 -> 加入提交点，写入磁盘 -> 新段打开 -> 清除缓存
+refresh：内存缓冲区文档写入段 -> 段打开 -> 缓存清除
+flush：内存缓冲区所有文档写入新段 -> 清楚缓存 -> 新题焦点写入硬盘 -> fsync操作flush到硬盘 -> 事务日志被清除
+合并段
+
+[docker]
+docker pull image
+docker container run/kill/ls/rm/start/logs/stop
+docker container exec -it id /bin/bash
+docker container cp id /path
+dockeringore
+docker hub
+docker image build
+
+[k8s]
+master:kube-apiserver、kube-controller-manager、kube-scheduler
+集群的资源管理、pod调度、弹性伸缩、安全控制、系统监控和纠错
+replication controller
+kubelet、kube-proxy、docker engine
+pod:volume持久化，docker-registry私有镜像，env环境变量，resources.limit资源限制，poststart/prestop钩子函数
+replicaset
+service:ports,loadbalancer
+volume:emptyDir
